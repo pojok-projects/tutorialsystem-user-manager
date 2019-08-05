@@ -45,6 +45,15 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if ($exception->getMessage() != "The given data was invalid.") {
+            $rendered = parent::render($request, $exception);
+            return response()->json([
+                'status' => [
+                    'code' => $rendered->getStatusCode(),
+                    'message' => $exception->getMessage(),
+                ]
+            ], $rendered->status());
+        }
         return parent::render($request, $exception);
     }
 }

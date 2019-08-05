@@ -17,4 +17,9 @@ $router->get('/', function () use ($router) {
 
 $router->group(['prefix'=>'v1'], function() use($router){
     $router->get('/user', 'UserController@index');
+    $router->post('/user/store', 'UserController@create');
+	$router->get('/user/{id}', 'UserController@show');
+	$router->post('/user/search', 'UserController@search');
+	$router->put('/user/update/{id}', 'UserController@update');
+	$router->delete('/user/delete/{id}', 'UserController@destroy');
 });
