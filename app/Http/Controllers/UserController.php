@@ -18,7 +18,7 @@ class UserController extends Controller
 
     private function checkduplicate($name)
     {
-        $result = $this->client->request('POST', $this->endpoint.'content/user/search', [
+        $result = $this->client->request('POST', $this->endpoint.'user/search', [
             'form_params' => [
                 'name' => $name
             ]
@@ -45,7 +45,7 @@ class UserController extends Controller
 
     public function index()
     {
-    	$result = $this->client->request('GET', $this->endpoint.'content/user');
+    	$result = $this->client->request('GET', $this->endpoint.'user');
 
         if ($result->getStatusCode() != 200) {
             return response()->json([
@@ -53,7 +53,7 @@ class UserController extends Controller
                     'code' => $result->getStatusCode(),
                     'message' => 'Bad Gateway',
                 ]
-            ], 500);
+            ], $result->getStatusCode());
         }
 
         return response()->json(json_decode($result->getBody(), true));
@@ -64,6 +64,15 @@ class UserController extends Controller
         $rules = [
             'name' => 'required|max:255|alpha_dash',
             'email' => 'required|email',
+            'password' => [
+                            'required',
+                            'string',
+                            'min:6',              // must be at least 10 characters in length
+                            'regex:/[a-z]/',      // must contain at least one lowercase letter
+                            'regex:/[A-Z]/',      // must contain at least one uppercase letter
+                            'regex:/[0-9]/',      // must contain at least one digit
+                            'regex:/[@$!%*#?&]/', // must contain a special character
+                        ],
             'first_name' => 'required|max:255|alpha_dash',
             'last_name' => 'required|max:255|alpha_dash',
             'birth_date' => 'date',
@@ -96,10 +105,11 @@ class UserController extends Controller
                 'result' => $check_duplicate['result'],
             ], 409);
         }else{
-            $result = $this->client->request('POST', $this->endpoint.'content/user/store', [
+            $result = $this->client->request('POST', $this->endpoint.'user/store', [
                 'form_params' => [
                     'name' => $request->name,
                     'email' => $request->email,
+                    'password' => md5($request->password),
                     'first_name' => $request->first_name,
                     'last_name' => $request->last_name,
                     'birth_date' => $request->birth_date,
@@ -128,7 +138,7 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $result = $this->client->request('GET', $this->endpoint.'content/user/'.$id);
+        $result = $this->client->request('GET', $this->endpoint.'user/'.$id);
 
         if ($result->getStatusCode() != 200) {
             return response()->json([
@@ -154,7 +164,7 @@ class UserController extends Controller
         $this->validate($request, $rules, $customMessages);
 
         $name = $request->name;
-        $result = $this->client->request('POST', $this->endpoint.'content/user/search', [
+        $result = $this->client->request('POST', $this->endpoint.'user/search', [
             'form_params' => [
                 'name' => $name
             ]
@@ -188,6 +198,15 @@ class UserController extends Controller
         $rules = [
             'name' => 'required|max:255|alpha_dash',
             'email' => 'required|email',
+            'password' => [
+                            'required',
+                            'string',
+                            'min:6',              // must be at least 10 characters in length
+                            'regex:/[a-z]/',      // must contain at least one lowercase letter
+                            'regex:/[A-Z]/',      // must contain at least one uppercase letter
+                            'regex:/[0-9]/',      // must contain at least one digit
+                            'regex:/[@$!%*#?&]/', // must contain a special character
+                        ],
             'first_name' => 'required|max:255|alpha_dash',
             'last_name' => 'required|max:255|alpha_dash',
             'birth_date' => 'date',
@@ -220,10 +239,11 @@ class UserController extends Controller
                 'result' => $check_duplicate['result'],
             ], 409);
         }else{
-            $result = $this->client->request('POST', $this->endpoint.'content/user/update/'.$id, [
+            $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id, [
                 'form_params' => [
                     'name' => $request->name,
                     'email' => $request->email,
+                    'password' => md5($request->password),
                     'first_name' => $request->first_name,
                     'last_name' => $request->last_name,
                     'birth_date' => $request->birth_date,
@@ -252,7 +272,7 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        $result = $this->client->request('POST', $this->endpoint.'content/user/delete/'.$id);
+        $result = $this->client->request('POST', $this->endpoint.'user/delete/'.$id);
 
         if ($result->getStatusCode() != 200) {
             return response()->json([

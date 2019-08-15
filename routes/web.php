@@ -15,11 +15,22 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->group(['prefix'=>'v1'], function() use($router){
-    $router->get('/user', 'UserController@index');
-    $router->post('/user/store', 'UserController@create');
-	$router->get('/user/{id}', 'UserController@show');
-	$router->post('/user/search', 'UserController@search');
-	$router->put('/user/update/{id}', 'UserController@update');
-	$router->delete('/user/delete/{id}', 'UserController@destroy');
+// USER ROUTE
+$router->group(['prefix'=>'v1/user'], function() use($router){
+    $router->get('/', 'UserController@index');
+    $router->post('/store', 'UserController@create');
+	$router->get('/{id}', 'UserController@show');
+	$router->post('/search', 'UserController@search');
+	$router->put('/update/{id}', 'UserController@update');
+	$router->delete('/delete/{id}', 'UserController@destroy');
 });
+
+// USER FOLLOWING ROUTE
+// $router->group(['prefix'=>'v1/user/following'], function() use($router){
+//     $router->get('/', 'UserFollowingController@index');
+ //    $router->post('/store', 'UserController@create');
+	// $router->get('/{id}', 'UserController@show');
+	// $router->post('/search', 'UserController@search');
+	// $router->put('/update/{id}', 'UserController@update');
+	// $router->delete('/delete/{id}', 'UserController@destroy');
+// });
