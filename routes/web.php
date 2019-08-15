@@ -16,21 +16,29 @@ $router->get('/', function () use ($router) {
 });
 
 // USER ROUTE
-$router->group(['prefix'=>'v1/user'], function() use($router){
-    $router->get('/', 'UserController@index');
-    $router->post('/store', 'UserController@create');
-	$router->get('/{id}', 'UserController@show');
-	$router->post('/search', 'UserController@search');
-	$router->put('/update/{id}', 'UserController@update');
-	$router->delete('/delete/{id}', 'UserController@destroy');
-});
+$router->group(['prefix'=>'v1'], function() use($router){
+	// Index Routes
+    $router->get('/user', 'UserController@index');
+    $router->get('/user/following', 'UserFollowingController@index');
 
-// USER FOLLOWING ROUTE
-// $router->group(['prefix'=>'v1/user/following'], function() use($router){
-//     $router->get('/', 'UserFollowingController@index');
- //    $router->post('/store', 'UserController@create');
-	// $router->get('/{id}', 'UserController@show');
-	// $router->post('/search', 'UserController@search');
-	// $router->put('/update/{id}', 'UserController@update');
-	// $router->delete('/delete/{id}', 'UserController@destroy');
-// });
+    // Show Routes
+    $router->get('user/{id}', 'UserController@show');
+    $router->get('user/following/{id}', 'UserFollowingController@show');
+
+    // Store Routes
+    $router->post('/user/store', 'UserController@create');
+    $router->post('/user/following/store', 'UserFollowingController@create');
+	
+	// Search Routes
+	$router->post('/user/search', 'UserController@search');
+	$router->post('/user/following/search', 'UserFollowingController@search');
+
+	// Update Routes
+	$router->put('/user/update/{id}', 'UserController@update');
+	$router->put('/user/following/update/{id}', 'UserFollowingController@update');
+
+	// Delete Routes
+	$router->delete('/user/delete/{id}', 'UserController@destroy');
+	$router->delete('/user/following/delete/{id}', 'UserFollowingController@destroy');
+
+});
