@@ -16,11 +16,11 @@ class UserFollowingController extends Controller
         $this->endpoint = env('ENDPOINT_API');
     }
 
-    private function checkduplicate($name)
+    private function checkduplicate($q)
     {
         $result = $this->client->request('POST', $this->endpoint.'user/following/search', [
             'form_params' => [
-                'name' => $name
+                'query' => $q
             ]
         ]);
             
@@ -45,13 +45,13 @@ class UserFollowingController extends Controller
 
     public function index()
     {
-        // return 'sad';
     	$result = $this->client->request('GET', $this->endpoint.'user/following');
 
         if ($result->getStatusCode() != 200) {
             return response()->json([
                 'status' => [
                     'code' => $result->getStatusCode(),
+                    'message' => 'Bad Gateway',
                     // 'message' => $result->getStatusCode(),
                 ]
             ], $result->getStatusCode());
@@ -72,8 +72,8 @@ class UserFollowingController extends Controller
         ];
         $this->validate($request, $rules, $customMessages);
 
-        // $check_duplicate = self::checkduplicate($request->name);
-        $check_duplicate = self::checkduplicate($request->name);
+        $chekquery = urlencode('user_id='.$request->user_id.',following_user_id='.$request->following_user_id);
+        $check_duplicate = self::checkduplicate($chekquery);
 
         if ($check_duplicate['response'] === 500) {
             return response()->json([
@@ -96,18 +96,8 @@ class UserFollowingController extends Controller
         }else{
             $result = $this->client->request('POST', $this->endpoint.'user/following/store', [
                 'form_params' => [
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'first_name' => $request->first_name,
-                    'last_name' => $request->last_name,
-                    'birth_date' => $request->birth_date,
-                    'gender' => $request->gender,
-                    'photo_profile' => $request->photo_profile,
-                    'about' => $request->about,
-                    'website_link' => $request->website_link,
-                    'facebook_link' => $request->facebook_link,
-                    'twitter_link' => $request->twitter_link,
-                    'linkedin_link' => $request->linkedin_link,
+                    'user_id' => $request->user_id,
+                    'following_user_id' => $request->following_user_id,
                 ]
             ]);
             
@@ -143,7 +133,7 @@ class UserFollowingController extends Controller
     public function search(Request $request)
     {
         $rules = [
-            'name' => 'required|max:255|alpha_dash'
+            'q' => 'required'
         ];
 
         $customMessages = [
@@ -151,10 +141,11 @@ class UserFollowingController extends Controller
         ];
         $this->validate($request, $rules, $customMessages);
 
-        $name = $request->name;
+        $query = urlencode($request->q);
+
         $result = $this->client->request('POST', $this->endpoint.'user/following/search', [
             'form_params' => [
-                'name' => $name
+                'query' => $query,
             ]
         ]);
 
@@ -167,29 +158,25 @@ class UserFollowingController extends Controller
             ], $result->getStatusCode());
         }
 
-        $search_category = json_decode($result->getBody(), true);
+        $search_following = json_decode($result->getBody(), true);
 
-        if ($search_category['status']['total']==0) {
+        if ($search_following['status']['total']==0) {
             return response()->json([
                 'status' => [
                     'code' => $result->getStatusCode(),
-                    'message' => 'Category not found',
+                    'message' => 'not found!',
                 ]
             ], $result->getStatusCode());
         }else{
-            return response()->json($search_category, $result->getStatusCode());  
+            return response()->json($search_following, $result->getStatusCode());  
         }    
     }
 
     public function update(Request $request, $id)
     { 
         $rules = [
-            'name' => 'required|max:255|alpha_dash',
-            'email' => 'required|email',
-            'first_name' => 'required|max:255|alpha_dash',
-            'last_name' => 'required|max:255|alpha_dash',
-            'birth_date' => 'date',
-            'gender' => 'required|in:male,female',
+            'user_id' => 'required',
+            'following_user_id' => 'required',
         ];
 
         $customMessages = [
@@ -197,7 +184,8 @@ class UserFollowingController extends Controller
         ];
         $this->validate($request, $rules, $customMessages);
 
-        $check_duplicate = self::checkduplicate($request->name);
+        $chekquery = urlencode('user_id='.$request->user_id.',following_user_id='.$request->following_user_id);
+        $check_duplicate = self::checkduplicate($chekquery);
 
         if ($check_duplicate['response'] === 500) {
             return response()->json([
@@ -220,18 +208,8 @@ class UserFollowingController extends Controller
         }else{
             $result = $this->client->request('POST', $this->endpoint.'user/following/update/'.$id, [
                 'form_params' => [
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'first_name' => $request->first_name,
-                    'last_name' => $request->last_name,
-                    'birth_date' => $request->birth_date,
-                    'gender' => $request->gender,
-                    'photo_profile' => $request->photo_profile,
-                    'about' => $request->about,
-                    'website_link' => $request->website_link,
-                    'facebook_link' => $request->facebook_link,
-                    'twitter_link' => $request->twitter_link,
-                    'linkedin_link' => $request->linkedin_link,
+                    'user_id' => $request->user_id,
+                    'following_user_id' => $request->following_user_id,
                 ]
             ]);
 
