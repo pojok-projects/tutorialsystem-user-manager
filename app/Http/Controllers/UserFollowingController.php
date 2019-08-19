@@ -88,7 +88,7 @@ class UserFollowingController extends Controller
             return response()->json([
                 'status' => [
                     'code' => '409',
-                    'message' => 'Duplicate user',
+                    'message' => 'Duplicate',
                     'total' => count($check_duplicate['result']),
                 ],
                 'result' => $check_duplicate['result'],
@@ -200,7 +200,7 @@ class UserFollowingController extends Controller
             return response()->json([
                 'status' => [
                     'code' => '409',
-                    'message' => 'Duplicate user',
+                    'message' => 'Duplicate',
                     'total' => count($check_duplicate['result']),
                 ],
                 'result' => $check_duplicate['result'],
