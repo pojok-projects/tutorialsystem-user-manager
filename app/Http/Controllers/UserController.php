@@ -163,7 +163,7 @@ class UserController extends Controller
         ];
         $this->validate($request, $rules, $customMessages);
 
-        $query = urlencode($request->q);
+        $query = urlencode('"'.$request->q.'"');
         $result = $this->client->request('POST', $this->endpoint.'user/search', [
             'form_params' => [
                 'query' => $query
