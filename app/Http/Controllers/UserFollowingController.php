@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use App\Traits\CheckDuplicate;
 
 class UserFollowingController extends Controller
 {
+    use CheckDuplicate;
+
     private $client;
     private $endpoint;
 
@@ -14,33 +17,6 @@ class UserFollowingController extends Controller
     {
         $this->client = new Client();
         $this->endpoint = env('ENDPOINT_API');
-    }
-
-    private function checkduplicate($q)
-    {
-        $result = $this->client->request('POST', $this->endpoint.'user/following/search', [
-            'form_params' => [
-                'query' => $q
-            ]
-        ]);
-            
-        if ($result->getStatusCode() != 200) {
-            return [
-                'response' => 500
-            ];
-        }else{
-            $check_duplicate = json_decode($result->getBody(), true);
-            if ($check_duplicate['status']['total'] == 0) {
-                return [
-                    'response' => false
-                ];
-            }else{
-                return [
-                    'response' => true,
-                    'result' => $check_duplicate['result']
-                ];
-            }
-        }
     }
 
     public function index()
@@ -52,7 +28,6 @@ class UserFollowingController extends Controller
                 'status' => [
                     'code' => $result->getStatusCode(),
                     'message' => 'Bad Gateway',
-                    // 'message' => $result->getStatusCode(),
                 ]
             ], $result->getStatusCode());
         }
@@ -72,8 +47,9 @@ class UserFollowingController extends Controller
         ];
         $this->validate($request, $rules, $customMessages);
 
-        $chekquery = urlencode('user_id='.$request->user_id.',following_user_id='.$request->following_user_id);
-        $check_duplicate = self::checkduplicate($chekquery);
+        //Check duplicate by USER_ID and FOLLOWING_USER_ID
+        $query_check_duplicete = urlencode('"user_id='.$request->user_id.',following_user_id='.$request->following_user_id.'"');
+        $check_duplicate = $this->ReqCheck($query_check_duplicete, 'following');
 
         if ($check_duplicate['response'] === 500) {
             return response()->json([
@@ -184,8 +160,9 @@ class UserFollowingController extends Controller
         ];
         $this->validate($request, $rules, $customMessages);
 
-        $chekquery = urlencode('user_id='.$request->user_id.',following_user_id='.$request->following_user_id);
-        $check_duplicate = self::checkduplicate($chekquery);
+        //Check duplicate by USER_ID and FOLLOWING_USER_ID
+        $query_check_duplicete = urlencode('"user_id='.$request->user_id.',following_user_id='.$request->following_user_id.'"');
+        $check_duplicate = $this->ReqCheck($query_check_duplicete, 'following');
 
         if ($check_duplicate['response'] === 500) {
             return response()->json([
