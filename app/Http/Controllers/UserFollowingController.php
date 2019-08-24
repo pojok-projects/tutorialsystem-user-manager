@@ -117,7 +117,7 @@ class UserFollowingController extends Controller
         ];
         $this->validate($request, $rules, $customMessages);
 
-        $query = urlencode($request->q);
+        $query = urlencode('"'.$request->q.'"');
 
         $result = $this->client->request('POST', $this->endpoint.'user/following/search', [
             'form_params' => [
