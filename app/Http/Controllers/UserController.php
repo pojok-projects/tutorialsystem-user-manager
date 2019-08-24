@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use App\Traits\CheckDuplicate;
 
 class UserController extends Controller
 {
+    use CheckDuplicate;
+
     private $client;
     private $endpoint;
 
@@ -14,33 +17,6 @@ class UserController extends Controller
     {
         $this->client = new Client();
         $this->endpoint = env('ENDPOINT_API');
-    }
-
-    private function checkduplicate($name)
-    {
-        $result = $this->client->request('POST', $this->endpoint.'user/search', [
-            'form_params' => [
-                'name' => $name
-            ]
-        ]);
-            
-        if ($result->getStatusCode() != 200) {
-            return [
-                'response' => 500
-            ];
-        }else{
-            $check_duplicate = json_decode($result->getBody(), true);
-            if ($check_duplicate['status']['total'] == 0) {
-                return [
-                    'response' => false
-                ];
-            }else{
-                return [
-                    'response' => true,
-                    'result' => $check_duplicate['result']
-                ];
-            }
-        }
     }
 
     public function index()
@@ -84,7 +60,9 @@ class UserController extends Controller
         ];
         $this->validate($request, $rules, $customMessages);
 
-        $check_duplicate = self::checkduplicate($request->name);
+        //Check duplicate by EMAIL
+        $query_check_duplicete = urlencode('"email='.$request->email.'"');
+        $check_duplicate = $this->ReqCheck($query_check_duplicete);
 
         if ($check_duplicate['response'] === 500) {
             return response()->json([
@@ -218,7 +196,9 @@ class UserController extends Controller
         ];
         $this->validate($request, $rules, $customMessages);
 
-        $check_duplicate = self::checkduplicate($request->name);
+        //Check duplicate by EMAIL
+        $query_check_duplicete = urlencode('"email='.$request->email.'"');
+        $check_duplicate = $this->ReqCheck($query_check_duplicete);
 
         if ($check_duplicate['response'] === 500) {
             return response()->json([
