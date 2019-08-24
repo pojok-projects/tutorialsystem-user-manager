@@ -155,7 +155,7 @@ class UserController extends Controller
     public function search(Request $request)
     {
         $rules = [
-            'name' => 'required|max:255|alpha_dash'
+            'q' => 'required'
         ];
 
         $customMessages = [
@@ -163,10 +163,10 @@ class UserController extends Controller
         ];
         $this->validate($request, $rules, $customMessages);
 
-        $name = $request->name;
+        $query = urlencode($request->q);
         $result = $this->client->request('POST', $this->endpoint.'user/search', [
             'form_params' => [
-                'name' => $name
+                'query' => $query
             ]
         ]);
 
@@ -185,7 +185,7 @@ class UserController extends Controller
             return response()->json([
                 'status' => [
                     'code' => $result->getStatusCode(),
-                    'message' => 'Category not found',
+                    'message' => 'not found',
                 ]
             ], $result->getStatusCode());
         }else{
