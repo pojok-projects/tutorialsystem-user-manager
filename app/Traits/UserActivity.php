@@ -14,23 +14,28 @@ trait UserActivity
         $this->endpoint = env('ENDPOINT_API');
     }
 
-    public function LastActivity($id_user, $activity)
+    public function ListActivity($id_user, $activity)
     {
         $result = $this->client->request('GET', $this->endpoint.'user/'.$id_user);
 
         if ($result->getStatusCode() != 200) {
-            return response()->json([
+            return json_encode([
                 'status' => [
-                    'code' => $result->getStatusCode(),
-                    'message' => 'Bad Gateway',
-                ]
-            ], $result->getStatusCode());
+                    'code'      => $result->getStatusCode()
+                ],
+                'result'    => []
+            ]);
+        }else{
+            $raw_user = json_decode($result->getBody(), true);
+
+            $activityuser = ($raw_user[$activity] ? $raw_user[$activity] : []);
+
+            return json_encode([
+                'status' => [
+                    'code'      => $result->getStatusCode()
+                ],
+                'result'    => $activityuser
+            ]);
         }
-
-        $raw_user = json_decode($result->getBody(), true);
-
-        $activityuser = ($raw_user[$activity] ? $raw_user[$activity] : []);
-
-        return json_encode($activityuser);
     }
 }

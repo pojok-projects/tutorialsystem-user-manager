@@ -5,12 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Illuminate\Support\Str;
-use App\Traits\CheckDuplicate;
 use App\Traits\UserActivity;
 
 class UserFollowingController extends Controller
 {
-    use CheckDuplicate;
     use UserActivity;
 
     private $client;
@@ -22,24 +20,9 @@ class UserFollowingController extends Controller
         $this->endpoint = env('ENDPOINT_API');
     }
 
-    // public function index()
-    // {
-    // 	$result = $this->client->request('GET', $this->endpoint.'user/following');
-
-    //     if ($result->getStatusCode() != 200) {
-    //         return response()->json([
-    //             'status' => [
-    //                 'code' => $result->getStatusCode(),
-    //                 'message' => 'Bad Gateway',
-    //             ]
-    //         ], $result->getStatusCode());
-    //     }
-
-    //     return response()->json(json_decode($result->getBody(), true));
-    // }
-
     public function create($id, Request $request)
     {
+        //Rule request
         $rules = [
             'following_user_id' => 'required|uuid'
         ];
@@ -49,34 +32,25 @@ class UserFollowingController extends Controller
         ];
         $this->validate($request, $rules, $customMessages);
 
-        //Check duplicate by FOLLOWING_USER_ID
-        // $query_check_duplicete = urlencode('"user_id='.$request->user_id.',following_user_id='.$request->following_user_id.'"');
-        // $check_duplicate = $this->ReqCheck($query_check_duplicete, 'following');
+        //Get list activity
+        $last_activity = json_decode($this->ListActivity($id, 'following'));        
 
-        // if ($check_duplicate['response'] === 500) {
-        //     return response()->json([
-        //         'status' => [
-        //             'code' => $check_duplicate['response'],
-        //             'message' => 'Bad Gateway',
-        //         ]
-        //     ], 500);
-        // }
+        //Check connection dbil
+        if ($last_activity->status->code != 200) {
+            return response()->json([
+                'status' => [
+                    'code' => $last_activity->status->code,
+                    'message' => 'Bad Gateway',
+                ]
+            ], $last_activity->status->code);
+        }
 
-        // if ($check_duplicate['response']) {
-        //     return response()->json([
-        //         'status' => [
-        //             'code' => '409',
-        //             'message' => 'Duplicate',
-        //             'total' => count($check_duplicate['result']),
-        //         ],
-        //         'result' => $check_duplicate['result'],
-        //     ], 409);
-        // }else{
-
-            $last_activity = json_decode($this->LastActivity($id, 'following'));
-
+        //check duplicate
+        if (array_search($request->following_user_id, array_column($last_activity->result, 'following_user_id')) === false) {
+            
+            $uuid_following = (string) Str::uuid();
             $array_following = array([
-                'id'                => (string) Str::uuid(),
+                'id'                => $uuid_following,
                 'following_user_id' => $request->following_user_id,
                 'created_at'        => date(DATE_ATOM),
                 'updated_at'        => date(DATE_ATOM)
@@ -84,10 +58,11 @@ class UserFollowingController extends Controller
 
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id, [
                 'form_params' => [
-                    'following' => array_merge($last_activity, $array_following)
+                    'following' => array_merge($last_activity->result, $array_following)
                 ]
             ]);
             
+            //Check connection dbil
             if ($result->getStatusCode() != 200) {
                 return response()->json([
                     'status' => [
@@ -97,14 +72,34 @@ class UserFollowingController extends Controller
                 ], $result->getStatusCode());
             }
 
-            return response()->json(json_decode($result->getBody(), true));
-        // }
+            return response()->json(array(
+                'status' => [
+                    'code' => $result->getStatusCode(),
+                    'message' => 'data has been saved',
+                ],
+                'result' => [
+                    'id' => $uuid_following
+                ]
+            ), 200);
+
+        } else {
+
+            return response()->json([
+                'status' => [
+                    'code' => 409,
+                    'message' => 'Duplicate',
+                ],
+                'result' => []
+            ], 409);
+            
+        }
     }
 
     public function show($id)
     {
         $result = $this->client->request('GET', $this->endpoint.'user/'.$id);
 
+        //Check connection dbil
         if ($result->getStatusCode() != 200) {
             return response()->json([
                 'status' => [
@@ -116,39 +111,33 @@ class UserFollowingController extends Controller
 
         $raw_user = json_decode($result->getBody(), true);
 
+        if ($raw_user['following']) {
+            $message    = ', data has been found';
+            $total = count($raw_user['following']);
+            $following_result = $raw_user['following'];
+        } else {
+            $message    = ', no data found';
+            $total = 0;
+            $following_result = [];
+        }
+
         $following_data = array(
             'status' => [
                 'code' => $result->getStatusCode(),
-                'message' => 'list query has been performed, data has been found',
-                'total' => ($raw_user['following'] ? count($raw_user['following']) : 0)
+                'message' => 'list query has been performed'.$message,
+                'total' => $total
             ],
-            'result' => ($raw_user['following'] ? $raw_user['following'] : [])
+            'result' => $following_result
         );
 
         return response()->json($following_data);
-
-        // return response()->json(json_decode($result->getBody(), true));
     }
 
-    public function search(Request $request)
+    public function destroy($id_user, $id_following)
     {
-        $rules = [
-            'q' => 'required'
-        ];
+        $result = $this->client->request('GET', $this->endpoint.'user/'.$id_user);
 
-        $customMessages = [
-             'required' => 'Please fill attribute :attribute'
-        ];
-        $this->validate($request, $rules, $customMessages);
-
-        $query = urlencode('"'.$request->q.'"');
-
-        $result = $this->client->request('POST', $this->endpoint.'user/following/search', [
-            'form_params' => [
-                'query' => $query,
-            ]
-        ]);
-
+        //Check connection dbil
         if ($result->getStatusCode() != 200) {
             return response()->json([
                 'status' => [
@@ -158,62 +147,21 @@ class UserFollowingController extends Controller
             ], $result->getStatusCode());
         }
 
-        $search_following = json_decode($result->getBody(), true);
+        $raw_user = json_decode($result->getBody(), true);
+        $list_following = $raw_user['following'];
+        $key = array_search($id_following, array_column($raw_user['following'], 'following_user_id'));
 
-        if ($search_following['status']['total']==0) {
-            return response()->json([
-                'status' => [
-                    'code' => $result->getStatusCode(),
-                    'message' => 'not found!',
-                ]
-            ], $result->getStatusCode());
-        }else{
-            return response()->json($search_following, $result->getStatusCode());  
-        }    
-    }
-
-    public function update(Request $request, $id)
-    { 
-        $rules = [
-            'user_id' => 'required',
-            'following_user_id' => 'required',
-        ];
-
-        $customMessages = [
-            'required' => 'Please fill attribute :attribute'
-        ];
-        $this->validate($request, $rules, $customMessages);
-
-        //Check duplicate by USER_ID and FOLLOWING_USER_ID
-        $query_check_duplicete = urlencode('"user_id='.$request->user_id.',following_user_id='.$request->following_user_id.'"');
-        $check_duplicate = $this->ReqCheck($query_check_duplicete, 'following');
-
-        if ($check_duplicate['response'] === 500) {
-            return response()->json([
-                'status' => [
-                    'code' => $check_duplicate['response'],
-                    'message' => 'Bad Gateway',
-                ]
-            ], 500);
-        }
-
-        if ($check_duplicate['response']) {
-            return response()->json([
-                'status' => [
-                    'code' => '409',
-                    'message' => 'Duplicate',
-                    'total' => count($check_duplicate['result']),
-                ],
-                'result' => $check_duplicate['result'],
-            ], 409);
-        }else{
-            $result = $this->client->request('POST', $this->endpoint.'user/following/update/'.$id, [
+        if ( $key === false) {
+            $message    = 'data not found';
+        } else {
+            unset($raw_user['following'][$key]);
+            $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id_user, [
                 'form_params' => [
-                    'user_id' => $request->user_id,
-                    'following_user_id' => $request->following_user_id,
+                    'following' => array_values($raw_user['following'])
                 ]
             ]);
-
+            
+            //Check connection dbil
             if ($result->getStatusCode() != 200) {
                 return response()->json([
                     'status' => [
@@ -222,24 +170,15 @@ class UserFollowingController extends Controller
                     ]
                 ], $result->getStatusCode());
             }
-            
-            return response()->json(json_decode($result->getBody(), true));
-        }
-    }
 
-    public function destroy($id)
-    {
-        $result = $this->client->request('POST', $this->endpoint.'user/following/delete/'.$id);
-
-        if ($result->getStatusCode() != 200) {
-            return response()->json([
-                'status' => [
-                    'code' => $result->getStatusCode(),
-                    'message' => 'Bad Gateway',
-                ]
-            ], $result->getStatusCode());
+            $message = 'data has been delete';
         }
-        
-        return response()->json(json_decode($result->getBody(), true));
+
+        return response()->json(array(
+            'status' => [
+                'code' => $result->getStatusCode(),
+                'message' => $message,
+            ]
+        ), 200);
     }
 }

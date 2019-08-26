@@ -40,25 +40,13 @@ $router->group(['prefix'=>'v1'], function() use($router){
 	
 	// Search Routes
 	$router->post('/user/search', 'UserController@search');
-	$router->post('/user/following/search', 'UserFollowingController@search');
-	// $router->post('/user/follower/search', 'UserFollowerController@search');
-	// $router->post('/user/likevideo/search', 'UserLikeVideoController@search');
-	// $router->post('/user/dislikevideo/search', 'UserDislikeVideoController@search');
-	// $router->post('/user/savedvideo/search', 'UserSavedVideoController@search');
-	// $router->post('/user/historyvideo/search', 'UserHistoryVideoController@search');
 
 	// Update Routes
 	$router->put('/user/update/{id}', 'UserController@update');
-	$router->put('/user/following/update/{id}', 'UserFollowingController@update');
-	// $router->put('/user/follower/update/{id}', 'UserFollowerController@update');
-	// $router->put('/user/likevideo/update/{id}', 'UserLikeVideoController@update');
-	// $router->put('/user/dislikevideo/update/{id}', 'UserDislikeVideoController@update');
-	// $router->put('/user/savedvideo/update/{id}', 'UserSavedVideoController@update');
-	// $router->put('/user/historyvideo/update/{id}', 'UserHistoryVideoController@update');
 
 	// Delete Routes
 	$router->delete('/user/delete/{id}', 'UserController@destroy');
-	$router->delete('/user/following/delete/{id}', 'UserFollowingController@destroy');
+	$router->delete('/user/following/delete/{id_user}/{id_following}', 'UserFollowingController@destroy');
 	// $router->delete('/user/follower/delete/{id}', 'UserFollowerController@destroy');
 	// $router->delete('/user/likevideo/delete/{id}', 'UserLikeVideoController@destroy');
 	// $router->delete('/user/dislikevideo/delete/{id}', 'UserDislikeVideoController@destroy');
