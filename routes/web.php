@@ -23,7 +23,7 @@ $router->group(['prefix'=>'v1'], function() use($router){
     // Show Routes
     $router->get('user/{id}', 'UserController@show');
     $router->get('user/following/{id}', 'UserFollowingController@show');
-    // $router->get('user/follower/{id}', 'UserFollowerController@show');
+    $router->get('user/follower/{id}', 'UserFollowerController@show');
     // $router->get('user/likevideo/{id}', 'UserLikeVideoController@show');
     // $router->get('user/dislikevideo/{id}', 'UserDislikeVideoController@show');
     // $router->get('user/savedvideo/{id}', 'UserSavedVideoController@show');
@@ -32,7 +32,7 @@ $router->group(['prefix'=>'v1'], function() use($router){
     // Store Routes
     $router->post('/user/store', 'UserController@create');
     $router->post('/user/following/store/{id}', 'UserFollowingController@create');
-    // $router->post('/user/follower/store', 'UserFollowerController@create');
+    $router->post('/user/follower/store/{id}', 'UserFollowerController@create');
     // $router->post('/user/likevideo/store', 'UserLikeVideoController@create');
     // $router->post('/user/dislikevideo/store', 'UserDislikeVideoController@create');
     // $router->post('/user/savedvideo/store', 'UserSavedVideoController@create');
@@ -47,7 +47,7 @@ $router->group(['prefix'=>'v1'], function() use($router){
 	// Delete Routes
 	$router->delete('/user/delete/{id}', 'UserController@destroy');
 	$router->delete('/user/following/delete/{id_user}/{id_following}', 'UserFollowingController@destroy');
-	// $router->delete('/user/follower/delete/{id}', 'UserFollowerController@destroy');
+	$router->delete('/user/follower/delete/{id_user}/{id_follower}', 'UserFollowerController@destroy');
 	// $router->delete('/user/likevideo/delete/{id}', 'UserLikeVideoController@destroy');
 	// $router->delete('/user/dislikevideo/delete/{id}', 'UserDislikeVideoController@destroy');
 	// $router->delete('/user/savedvideo/delete/{id}', 'UserSavedVideoController@destroy');
