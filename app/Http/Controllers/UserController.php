@@ -21,7 +21,7 @@ class UserController extends Controller
 
     public function index()
     {
-    	$result = $this->client->request('GET', $this->endpoint.'user');
+        $result = $this->client->request('GET', $this->endpoint.'user');
 
         if ($result->getStatusCode() != 200) {
             return response()->json([
@@ -38,21 +38,19 @@ class UserController extends Controller
     public function create(Request $request)
     {
         $rules = [
-            'name' => 'required|max:255|alpha_dash',
-            'email' => 'required|email',
-            'password' => [
-                            'required',
-                            'string',
-                            'min:6',              // must be at least 10 characters in length
-                            'regex:/[a-z]/',      // must contain at least one lowercase letter
-                            'regex:/[A-Z]/',      // must contain at least one uppercase letter
-                            'regex:/[0-9]/',      // must contain at least one digit
-                            'regex:/[@$!%*#?&]/', // must contain a special character
-                        ],
-            'first_name' => 'required|max:255|alpha_dash',
-            'last_name' => 'required|max:255|alpha_dash',
-            'birth_date' => 'date',
-            'gender' => 'required|in:male,female',
+            'name'           => 'required|max:255|regex:/[a-zA-Z0-9\s]+/',
+            'email'          => 'required|email',
+            'first_name'     => 'required|max:255|regex:/[a-zA-Z0-9\s]+/',
+            'last_name'      => 'required|max:255|regex:/[a-zA-Z0-9\s]+/',
+            'birth_date'     => 'required|date',
+            'gender'         => 'required|in:male,female',
+            'photo_profile'  => 'max:256',
+            'about'          => 'max:2000',
+
+            'website_link'   => 'max:256|url',
+            'facebook_link'  => 'max:256|url',
+            'twitter_link'   => 'max:256|url',
+            'linkedin_link'  => 'max:256|url',
         ];
 
         $customMessages = [
@@ -77,7 +75,7 @@ class UserController extends Controller
             return response()->json([
                 'status' => [
                     'code' => '409',
-                    'message' => 'Duplicate user',
+                    'message' => 'Duplicate Email',
                     'total' => count($check_duplicate['result']),
                 ],
                 'result' => $check_duplicate['result'],
@@ -85,19 +83,19 @@ class UserController extends Controller
         }else{
             $result = $this->client->request('POST', $this->endpoint.'user/store', [
                 'form_params' => [
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'password' => md5($request->password),
-                    'first_name' => $request->first_name,
-                    'last_name' => $request->last_name,
-                    'birth_date' => $request->birth_date,
-                    'gender' => $request->gender,
-                    'photo_profile' => $request->photo_profile,
-                    'about' => $request->about,
-                    'website_link' => $request->website_link,
-                    'facebook_link' => $request->facebook_link,
-                    'twitter_link' => $request->twitter_link,
-                    'linkedin_link' => $request->linkedin_link,
+                    'name'           => $request->name,
+                    'email'          => $request->email,
+                    'first_name'     => $request->first_name,
+                    'last_name'      => $request->last_name,
+                    'birth_date'     => $request->birth_date,
+                    'gender'         => $request->gender,
+                    'photo_profile'  => $request->photo_profile,
+                    'about'          => $request->about,
+
+                    'website_link'   => $request->website_link,
+                    'facebook_link'  => $request->facebook_link,
+                    'twitter_link'   => $request->twitter_link,
+                    'linkedin_link'  => $request->linkedin_link,
                 ]
             ]);
             
@@ -174,21 +172,19 @@ class UserController extends Controller
     public function update(Request $request, $id)
     { 
         $rules = [
-            'name' => 'required|max:255|alpha_dash',
-            'email' => 'required|email',
-            'password' => [
-                            'required',
-                            'string',
-                            'min:6',              // must be at least 10 characters in length
-                            'regex:/[a-z]/',      // must contain at least one lowercase letter
-                            'regex:/[A-Z]/',      // must contain at least one uppercase letter
-                            'regex:/[0-9]/',      // must contain at least one digit
-                            'regex:/[@$!%*#?&]/', // must contain a special character
-                        ],
-            'first_name' => 'required|max:255|alpha_dash',
-            'last_name' => 'required|max:255|alpha_dash',
-            'birth_date' => 'date',
-            'gender' => 'required|in:male,female',
+            'name'           => 'max:256|regex:/[a-zA-Z0-9\s]+/',
+            'email'          => 'email',
+            'first_name'     => 'max:256|regex:/[a-zA-Z0-9\s]+/',
+            'last_name'      => 'max:256|regex:/[a-zA-Z0-9\s]+/',
+            'birth_date'     => 'date',
+            'gender'         => 'in:male,female',
+            'photo_profile'  => 'max:256',
+            'about'          => 'max:2000',
+
+            'website_link'   => 'max:256|url',
+            'facebook_link'  => 'max:256|url',
+            'twitter_link'   => 'max:256|url',
+            'linkedin_link'  => 'max:256|url',
         ];
 
         $customMessages = [
@@ -221,19 +217,19 @@ class UserController extends Controller
         }else{
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id, [
                 'form_params' => [
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'password' => md5($request->password),
-                    'first_name' => $request->first_name,
-                    'last_name' => $request->last_name,
-                    'birth_date' => $request->birth_date,
-                    'gender' => $request->gender,
-                    'photo_profile' => $request->photo_profile,
-                    'about' => $request->about,
-                    'website_link' => $request->website_link,
-                    'facebook_link' => $request->facebook_link,
-                    'twitter_link' => $request->twitter_link,
-                    'linkedin_link' => $request->linkedin_link,
+                    'name'           => $request->name,
+                    'email'          => $request->email,
+                    'first_name'     => $request->first_name,
+                    'last_name'      => $request->last_name,
+                    'birth_date'     => $request->birth_date,
+                    'gender'         => $request->gender,
+                    'photo_profile'  => $request->photo_profile,
+                    'about'          => $request->about,
+
+                    'website_link'   => $request->website_link,
+                    'facebook_link'  => $request->facebook_link,
+                    'twitter_link'   => $request->twitter_link,
+                    'linkedin_link'  => $request->linkedin_link,
                 ]
             ]);
 
