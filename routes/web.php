@@ -16,7 +16,7 @@ $router->get('/', function () use ($router) {
 });
 
 // USER ROUTE
-$router->group(['prefix'=>'v1'], function() use($router){
+$router->group(['prefix'=>'upa/v1'], function() use($router){
 	// Index Routes
     $router->get('/user', 'UserController@index');
 
@@ -39,7 +39,7 @@ $router->group(['prefix'=>'v1'], function() use($router){
     // $router->post('/user/historyvideo/store', 'UserHistoryVideoController@create');
 	
 	// Search Routes
-	$router->post('/user/search', 'UserController@search');
+	$router->get('/user/search', 'UserController@ssearch');
 
 	// Update Routes
 	$router->put('/user/update/{id}', 'UserController@update');

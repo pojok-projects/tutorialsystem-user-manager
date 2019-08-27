@@ -130,16 +130,7 @@ class UserController extends Controller
 
     public function search(Request $request)
     {
-        $rules = [
-            'q' => 'required'
-        ];
-
-        $customMessages = [
-             'required' => 'Please fill attribute :attribute'
-        ];
-        $this->validate($request, $rules, $customMessages);
-
-        $query = urlencode('"'.$request->q.'"');
+        $query = urlencode('"'.http_build_query($_GET,'',',').'"');
         $result = $this->client->request('POST', $this->endpoint.'user/search', [
             'form_params' => [
                 'query' => $query
@@ -157,16 +148,7 @@ class UserController extends Controller
 
         $search_category = json_decode($result->getBody(), true);
 
-        if ($search_category['status']['total']==0) {
-            return response()->json([
-                'status' => [
-                    'code' => $result->getStatusCode(),
-                    'message' => 'not found',
-                ]
-            ], $result->getStatusCode());
-        }else{
-            return response()->json($search_category, $result->getStatusCode());  
-        }    
+        return response()->json($search_category, $result->getStatusCode());  
     }
 
     public function update(Request $request, $id)
