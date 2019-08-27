@@ -39,7 +39,7 @@ $router->group(['prefix'=>'upa/v1'], function() use($router){
     // $router->post('/user/historyvideo/store', 'UserHistoryVideoController@create');
 	
 	// Search Routes
-	$router->get('/user/search', 'UserController@ssearch');
+	$router->get('/user/search', 'UserController@search');
 
 	// Update Routes
 	$router->put('/user/update/{id}', 'UserController@update');

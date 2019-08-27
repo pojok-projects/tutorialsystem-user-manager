@@ -128,7 +128,7 @@ class UserController extends Controller
         return response()->json(json_decode($result->getBody(), true));
     }
 
-    public function search(Request $request)
+    public function search()
     {
         $query = urlencode('"'.http_build_query($_GET,'',',').'"');
         $result = $this->client->request('POST', $this->endpoint.'user/search', [
