@@ -63,7 +63,8 @@ Represents User Following Details.
 
 -----
 
-**Following Table Parameters:**
+## Following Table Parameters
+
 | Parameter           | type   | Status   | Description               |
 | ------------------- | ------ | -------- | ------------------------- |
 | `following_user_id` | string | required | User ID of Following User |
@@ -85,7 +86,7 @@ Represents User Follower Details.
 
 -----
 
-**Follower Table Parameters:**
+## Follower Table Parameters:
 | Parameter           | type   | Status   | Description               |
 | ------------------- | ------ | -------- | ------------------------- |
 | `follower_user_id`  | string | required | User ID of Follower User  |
@@ -107,7 +108,7 @@ Represents User Like Video Details.
 
 -----
 
-**Like Video Table Parameters:**
+## Like Video Table Parameters
 | Parameter           | type   | Status   | Description               |
 | ------------------- | ------ | -------- | ------------------------- |
 | `user_id`           | string | required | User ID                   |
@@ -130,7 +131,7 @@ Represents User Dislike Video Details.
 
 -----
 
-**Dislike Video Table Parameters:**
+## Dislike Video Table Parameters
 | Parameter           | type   | Status   | Description               |
 | ------------------- | ------ | -------- | ------------------------- |
 | `user_id`           | string | required | User ID                   |
@@ -153,7 +154,7 @@ Represents User Saved Video Details.
 
 -----
 
-**Saved Video Table Parameters:**
+## Saved Video Table Parameters
 | Parameter           | type   | Status   | Description               |
 | ------------------- | ------ | -------- | ------------------------- |
 | `video_id`          | string | required | ID of Metadata            |
@@ -176,7 +177,7 @@ Represents User History Video Details.
 
 -----
 
-**User History Video Table Parameters:**
+## User History Video Table Parameters
 | Parameter           | type   | Status   | Description               |
 | ------------------- | ------ | -------- | ------------------------- |
 | `video_id`          | string | required | ID of Metadata            |
@@ -200,7 +201,7 @@ Represents User Playlists Details.
 
 -----
 
-**User Playlists Table Parameters:**
+## User Playlists Table Parameters
 | Parameter             | type   | Status   | Description                         |
 | --------------------- | ------ | -------- | ----------------------------------- |
 | `playlistcategory_id` | string | required | ID From content playlists category  |
