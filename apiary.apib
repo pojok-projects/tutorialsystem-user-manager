@@ -251,6 +251,15 @@ Represents User Following Details.
 
 -----
 
+## Table Structure End Points
+| URL                                              | Method | INFO                               |
+| ------------------------------------------------ | ------ | ---------------------------------- |
+| `user/following/store/{id_user}`                 | POST   | Save Data                          |
+| `user/following/{id_user}`                       | GET    | Get Data by ID User                |
+| `user/following/delete/{id_user}/{id_following}` | DELETE | Delete Data by ID and ID Following  |
+
+-----
+
 **Following Table Parameters:**
 | Parameter           | type   | Status   | Description               |
 | ------------------- | ------ | -------- | ------------------------- |
@@ -325,6 +334,15 @@ Represents User Follower Details.
 
 -----
 
+## Table Structure End Points
+| URL                                              | Method | INFO                                    |
+| ------------------------------------------------ | ------ | --------------------------------------- |
+| `user/follower/store/{id_user}`                  | POST   | Save Data                               |
+| `user/follower/{id_user}`                        | GET    | Get Data by ID User                     |
+| `user/follower/delete/{id_user}/{id_follower}`   | DELETE | Delete Data by ID User and ID Follower  |
+
+-----
+
 **Follower Table Parameters:**
 | Parameter           | type   | Status   | Description               |
 | ------------------- | ------ | -------- | ------------------------- |
@@ -396,6 +414,15 @@ Represents User Follower Details.
 ## User Like Video [/upa/v1/user/likevideo]
 
 Represents User Like Video Details. 
+
+-----
+
+## Table Structure End Points
+| URL                                               | Method | INFO                                       |
+| ------------------------------------------------- | ------ | --------------------------------------- |
+| `user/likevideo/store/{id_user}`                  | POST   | Save Data                              |
+| `user/likevideo/{id_user}`                        | GET    | Get Data by ID User                    |
+| `user/likevideo/delete/{id_user}/{id_like_video}` | DELETE | Delete Data by ID User and ID Like Video  |
 
 -----
 
@@ -476,6 +503,15 @@ Represents User Dislike Video Details.
 
 -----
 
+## Table Structure End Points
+| URL                                               | Method | INFO                                       |
+| ------------------------------------------------- | ------ | --------------------------------------- |
+| `user/dislikevideo/store/{id_user}`                   | POST   | Save Data                              |
+| `user/dislikevideo/{id_user}`                         | GET    | Get Data by ID User                    |
+| `user/dislikevideo/delete/{id_user}/{id_dislike_video}` | DELETE | Delete Data by ID User and ID Disike Video  |
+
+-----
+
 **Dislike Video Table Parameters:**
 | Parameter           | type   | Status   | Description               |
 | ------------------- | ------ | -------- | ------------------------- |
@@ -553,6 +589,15 @@ Represents User Saved Video Details.
 
 -----
 
+## Table Structure End Points
+| URL                                               | Method | INFO                                       |
+| ------------------------------------------------- | ------ | --------------------------------------- |
+| `user/savedvideo/store/{id_user}`                     | POST   | Save Data                              |
+| `user/savedvideo/{id_user}`                       | GET    | Get Data by ID User                    |
+| `user/savedvideo/delete/{id_user}/{id_saved_video}` | DELETE | Delete Data by ID User and ID Saved Video  |
+
+-----
+
 **Saved Video Table Parameters:**
 | Parameter           | type   | Status   | Description               |
 | ------------------- | ------ | -------- | ------------------------- |
@@ -624,6 +669,16 @@ Represents User Saved Video Details.
 ## User History Video [/upa/v1/user/historyvideo]
 
 Represents User History Video Details. 
+
+-----
+
+## Table Structure End Points
+| URL                                               | Method | INFO                                       |
+| ------------------------------------------------- | ------ | --------------------------------------- |
+| `user/historyvideo/store/{id_user}`                   | POST   | Save Data                              |
+| `user/historyvideo/{id_user}`                         | GET    | Get Data by ID User                    |
+| `user/historyvideo/update/{id_user}/{id_history_video}` | PUT | Update Data by ID User and ID History Video  |
+| `user/historyvideo/delete/{id_user}/{id_history_video}` | DELETE | Delete Data by ID User and ID History Video  |
 
 -----
 
