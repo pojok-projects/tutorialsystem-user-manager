@@ -7,7 +7,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Str;
 use App\Traits\UserActivity;
 
-class UserHistoryVideoController extends Controller
+class UserPlaylistsController extends Controller
 {
     use UserActivity;
 
@@ -24,8 +24,8 @@ class UserHistoryVideoController extends Controller
     {
         //Rule request
         $rules = [
-            'video_id' => 'required|uuid',
-            'last_watch' => 'required'
+            'playlistcategory_id' => 'required|uuid',
+            'metadata_id' => 'required|uuid'
         ];
 
         $customMessages = [
@@ -34,7 +34,7 @@ class UserHistoryVideoController extends Controller
         $this->validate($request, $rules, $customMessages);
 
         //Get list activity
-        $last_activity = json_decode($this->ListActivity($id, 'history_video'));        
+        $last_activity = json_decode($this->ListActivity($id, 'playlists'));        
 
         //Check connection dbil
         if ($last_activity->status->code != 200) {
@@ -47,20 +47,22 @@ class UserHistoryVideoController extends Controller
         }
 
         //check duplicate
-        if (array_search($request->video_id, array_column($last_activity->result, 'video_id')) === false) {
+        if (array_search($request->playlistcategory_id, array_column($last_activity->result, 'playlistcategory_id')) === false AND array_search($request->metadata_id, array_column($last_activity->result, 'metadata_id')) === false) {
             
-            $uuid_history_video = (string) Str::uuid();
-            $array_history_video = array([
-                'id'                => $uuid_history_video,
-                'video_id'          => $request->video_id,
-                'last_watch'        => $request->last_watch,
-                'created_at'        => date(DATE_ATOM),
-                'updated_at'        => date(DATE_ATOM)
+            $uuid_playlists = (string) Str::uuid();
+            $array_playlists = array([
+                'id'                    => $uuid_playlists,
+                'playlistcategory_id'   => $request->playlistcategory_id,
+                'metadata_id'           => $request->metadata_id,
+                'order_list'            => ($request->order_list ? $request->order_list : 0),
+                'last_watch'            => ($request->last_watch ? $request->last_watch : 0),
+                'created_at'            => date(DATE_ATOM),
+                'updated_at'            => date(DATE_ATOM)
             ]);
 
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id, [
                 'form_params' => [
-                    'history_video' => array_merge($last_activity->result, $array_history_video)
+                    'playlists' => array_merge($last_activity->result, $array_playlists)
                 ]
             ]);
             
@@ -80,7 +82,7 @@ class UserHistoryVideoController extends Controller
                     'message' => 'data has been saved',
                 ],
                 'result' => [
-                    'id' => $uuid_history_video
+                    'id' => $uuid_playlists
                 ]
             ), 200);
 
@@ -113,33 +115,34 @@ class UserHistoryVideoController extends Controller
 
         $raw_user = json_decode($result->getBody(), true);
 
-        if ($raw_user['history_video']) {
+        if ($raw_user['playlists']) {
             $message    = ', data has been found';
-            $total = count($raw_user['history_video']);
-            $history_video_result = $raw_user['history_video'];
+            $total = count($raw_user['playlists']);
+            $playlists_result = $raw_user['playlists'];
         } else {
             $message    = ', no data found';
             $total = 0;
-            $history_video_result = [];
+            $playlists_result = [];
         }
 
-        $history_video_data = array(
+        $playlists_data = array(
             'status' => [
                 'code' => $result->getStatusCode(),
                 'message' => 'list query has been performed'.$message,
                 'total' => $total
             ],
-            'result' => $history_video_result
+            'result' => $playlists_result
         );
 
-        return response()->json($history_video_data);
+        return response()->json($playlists_data);
     }
 
-    public function update($id_user, $id_history_video, Request $request)
+    public function update($id_user, $id_playlists, Request $request)
     { 
         //Rule request
         $rules = [
-            'last_watch' => 'required'
+            'order_list' => 'integer',
+            'last_watch' => 'integer'
         ];
 
         $customMessages = [
@@ -148,7 +151,7 @@ class UserHistoryVideoController extends Controller
         $this->validate($request, $rules, $customMessages);
 
         //Get list activity
-        $last_activity = json_decode($this->ListActivity($id_user, 'history_video')); 
+        $last_activity = json_decode($this->ListActivity($id_user, 'playlists')); 
 
         //Check connection dbil
         if ($last_activity->status->code != 200) {
@@ -160,7 +163,7 @@ class UserHistoryVideoController extends Controller
             ], $last_activity->status->code);
         }
 
-        $key = array_search($id_history_video, array_column($last_activity->result, 'id'));
+        $key = array_search($id_playlists, array_column($last_activity->result, 'id'));
         
         if ( $key === false ) {
 
@@ -173,12 +176,13 @@ class UserHistoryVideoController extends Controller
 
         } else {
 
-            //update last_watch
-            $last_activity->result[$key]->last_watch = $request->last_watch;
+            //update order_list and last_watch
+            $last_activity->result[$key]->order_list = ($request->order_list ? $request->order_list : $last_activity->result[$key]->order_list);
+            $last_activity->result[$key]->last_watch = ($request->last_watch ? $request->last_watch : $last_activity->result[$key]->last_watch);
     
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id_user, [
                 'form_params' => [
-                    'history_video' => $last_activity->result
+                    'playlists' => $last_activity->result
                 ]
             ]);
             
@@ -198,14 +202,14 @@ class UserHistoryVideoController extends Controller
                     'message' => 'data has been saved',
                 ],
                 'result' => [
-                    "id" => $id_history_video
+                    "id" => $id_playlists
                 ]
             ), 200);
 
         }
     }
-    
-    public function destroy($id_user, $id_history_video)
+
+    public function destroy($id_user, $id_playlists)
     {
         $result = $this->client->request('GET', $this->endpoint.'user/'.$id_user);
 
@@ -220,17 +224,16 @@ class UserHistoryVideoController extends Controller
         }
 
         $raw_user = json_decode($result->getBody(), true);
-        $list_history_video = $raw_user['history_video'];
+        $list_playlists = $raw_user['playlists'];
+        $key = array_search($id_playlists, array_column($raw_user['playlists'], 'id'));
 
-        $key = array_search($id_history_video, array_column($raw_user['history_video'], 'id'));
-
-        if ( $key === false ) {
+        if ( $key === false) {
             $message    = 'data not found';
         } else {
-            unset($raw_user['history_video'][$key]);
+            unset($raw_user['playlists'][$key]);
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id_user, [
                 'form_params' => [
-                    'history_video' => ( count($raw_user['history_video']) === 0 ? 0 : array_values($raw_user['history_video']) )
+                    'playlists' => ( count($raw_user['playlists']) === 0 ? 0 : array_values($raw_user['playlists']) )
                 ]
             ]);
             

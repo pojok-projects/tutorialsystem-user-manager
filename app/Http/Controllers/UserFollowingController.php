@@ -149,7 +149,7 @@ class UserFollowingController extends Controller
 
         $raw_user = json_decode($result->getBody(), true);
         $list_following = $raw_user['following'];
-        $key = array_search($id_following, array_column($raw_user['following'], 'following_user_id'));
+        $key = array_search($id_following, array_column($raw_user['following'], 'id'));
 
         if ( $key === false) {
             $message    = 'data not found';
@@ -157,7 +157,7 @@ class UserFollowingController extends Controller
             unset($raw_user['following'][$key]);
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id_user, [
                 'form_params' => [
-                    'following' => array_values($raw_user['following'])
+                    'following' => ( count($raw_user['following']) === 0 ? 0 : array_values($raw_user['following']) )
                 ]
             ]);
             

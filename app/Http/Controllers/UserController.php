@@ -130,7 +130,8 @@ class UserController extends Controller
 
     public function search()
     {
-        $query = urlencode('"'.http_build_query($_GET,'',',').'"');
+        $query = str_replace('%2B','+',urlencode('"'.http_build_query($_GET,'',',').'"'));
+
         $result = $this->client->request('POST', $this->endpoint.'user/search', [
             'form_params' => [
                 'query' => $query

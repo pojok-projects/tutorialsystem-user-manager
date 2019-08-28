@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use Illuminate\Support\Str;
+use App\Traits\UserActivity;
 
 class UserLikeVideoController extends Controller
 {
+    use UserActivity;
+
     private $client;
     private $endpoint;
 
@@ -16,55 +20,12 @@ class UserLikeVideoController extends Controller
         $this->endpoint = env('ENDPOINT_API');
     }
 
-    private function checkduplicate($q)
+    public function create($id, Request $request)
     {
-        $result = $this->client->request('POST', $this->endpoint.'user/likevideo/search', [
-            'form_params' => [
-                'query' => $q
-            ]
-        ]);
-            
-        if ($result->getStatusCode() != 200) {
-            return [
-                'response' => 500
-            ];
-        }else{
-            $check_duplicate = json_decode($result->getBody(), true);
-            if ($check_duplicate['status']['total'] == 0) {
-                return [
-                    'response' => false
-                ];
-            }else{
-                return [
-                    'response' => true,
-                    'result' => $check_duplicate['result']
-                ];
-            }
-        }
-    }
-
-    public function index()
-    {
-    	$result = $this->client->request('GET', $this->endpoint.'user/likevideo');
-
-        if ($result->getStatusCode() != 200) {
-            return response()->json([
-                'status' => [
-                    'code' => $result->getStatusCode(),
-                    'message' => 'Bad Gateway',
-                    // 'message' => $result->getStatusCode(),
-                ]
-            ], $result->getStatusCode());
-        }
-
-        return response()->json(json_decode($result->getBody(), true));
-    }
-
-    public function create(Request $request)
-    {
+        //Rule request
         $rules = [
-            'user_id' => 'required',
-            'video_id' => 'required',
+            'user_id' => 'required|uuid',
+            'video_id' => 'required|uuid'
         ];
 
         $customMessages = [
@@ -72,35 +33,38 @@ class UserLikeVideoController extends Controller
         ];
         $this->validate($request, $rules, $customMessages);
 
-        $chekquery = urlencode('user_id='.$request->user_id.',video_id='.$request->video_id);
-        $check_duplicate = self::checkduplicate($chekquery);
+        //Get list activity
+        $last_activity = json_decode($this->ListActivity($id, 'like_video'));        
 
-        if ($check_duplicate['response'] === 500) {
+        //Check connection dbil
+        if ($last_activity->status->code != 200) {
             return response()->json([
                 'status' => [
-                    'code' => $check_duplicate['response'],
+                    'code' => $last_activity->status->code,
                     'message' => 'Bad Gateway',
                 ]
-            ], 500);
+            ], $last_activity->status->code);
         }
 
-        if ($check_duplicate['response']) {
-            return response()->json([
-                'status' => [
-                    'code' => '409',
-                    'message' => 'Duplicate',
-                    'total' => count($check_duplicate['result']),
-                ],
-                'result' => $check_duplicate['result'],
-            ], 409);
-        }else{
-            $result = $this->client->request('POST', $this->endpoint.'user/likevideo/store', [
+        //check duplicate
+        if (array_search($request->user_id, array_column($last_activity->result, 'user_id')) === false AND array_search($request->video_id, array_column($last_activity->result, 'video_id')) === false) {
+            
+            $uuid_like_video = (string) Str::uuid();
+            $array_like_video = array([
+                'id'                => $uuid_like_video,
+                'user_id'           => $request->user_id,
+                'video_id'          => $request->video_id,
+                'created_at'        => date(DATE_ATOM),
+                'updated_at'        => date(DATE_ATOM)
+            ]);
+
+            $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id, [
                 'form_params' => [
-                    'user_id' => $request->user_id,
-                    'video_id' => $request->video_id,
+                    'like_video' => array_merge($last_activity->result, $array_like_video)
                 ]
             ]);
             
+            //Check connection dbil
             if ($result->getStatusCode() != 200) {
                 return response()->json([
                     'status' => [
@@ -110,14 +74,34 @@ class UserLikeVideoController extends Controller
                 ], $result->getStatusCode());
             }
 
-            return response()->json(json_decode($result->getBody(), true));
+            return response()->json(array(
+                'status' => [
+                    'code' => $result->getStatusCode(),
+                    'message' => 'data has been saved',
+                ],
+                'result' => [
+                    'id' => $uuid_like_video
+                ]
+            ), 200);
+
+        } else {
+
+            return response()->json([
+                'status' => [
+                    'code' => 409,
+                    'message' => 'Duplicate',
+                ],
+                'result' => []
+            ], 409);
+            
         }
     }
 
     public function show($id)
     {
-        $result = $this->client->request('GET', $this->endpoint.'user/likevideo/'.$id);
+        $result = $this->client->request('GET', $this->endpoint.'user/'.$id);
 
+        //Check connection dbil
         if ($result->getStatusCode() != 200) {
             return response()->json([
                 'status' => [
@@ -127,28 +111,35 @@ class UserLikeVideoController extends Controller
             ], $result->getStatusCode());
         }
 
-        return response()->json(json_decode($result->getBody(), true));
+        $raw_user = json_decode($result->getBody(), true);
+
+        if ($raw_user['like_video']) {
+            $message    = ', data has been found';
+            $total = count($raw_user['like_video']);
+            $like_video_result = $raw_user['like_video'];
+        } else {
+            $message    = ', no data found';
+            $total = 0;
+            $like_video_result = [];
+        }
+
+        $like_video_data = array(
+            'status' => [
+                'code' => $result->getStatusCode(),
+                'message' => 'list query has been performed'.$message,
+                'total' => $total
+            ],
+            'result' => $like_video_result
+        );
+
+        return response()->json($like_video_data);
     }
 
-    public function search(Request $request)
+    public function destroy($id_user, $id_like_video)
     {
-        $rules = [
-            'q' => 'required'
-        ];
+        $result = $this->client->request('GET', $this->endpoint.'user/'.$id_user);
 
-        $customMessages = [
-             'required' => 'Please fill attribute :attribute'
-        ];
-        $this->validate($request, $rules, $customMessages);
-
-        $query = urlencode($request->q);
-
-        $result = $this->client->request('POST', $this->endpoint.'user/likevideo/search', [
-            'form_params' => [
-                'query' => $query,
-            ]
-        ]);
-
+        //Check connection dbil
         if ($result->getStatusCode() != 200) {
             return response()->json([
                 'status' => [
@@ -158,61 +149,21 @@ class UserLikeVideoController extends Controller
             ], $result->getStatusCode());
         }
 
-        $search_follower = json_decode($result->getBody(), true);
+        $raw_user = json_decode($result->getBody(), true);
+        $list_like_video = $raw_user['like_video'];
+        $key = array_search($id_like_video, array_column($raw_user['like_video'], 'id'));
 
-        if ($search_follower['status']['total']==0) {
-            return response()->json([
-                'status' => [
-                    'code' => $result->getStatusCode(),
-                    'message' => 'not found!',
-                ]
-            ], $result->getStatusCode());
-        }else{
-            return response()->json($search_follower, $result->getStatusCode());  
-        }    
-    }
-
-    public function update(Request $request, $id)
-    { 
-        $rules = [
-            'user_id' => 'required',
-            'video_id' => 'required',
-        ];
-
-        $customMessages = [
-            'required' => 'Please fill attribute :attribute'
-        ];
-        $this->validate($request, $rules, $customMessages);
-
-        $chekquery = urlencode('user_id='.$request->user_id.',video_id='.$request->video_id);
-        $check_duplicate = self::checkduplicate($chekquery);
-
-        if ($check_duplicate['response'] === 500) {
-            return response()->json([
-                'status' => [
-                    'code' => $check_duplicate['response'],
-                    'message' => 'Bad Gateway',
-                ]
-            ], 500);
-        }
-
-        if ($check_duplicate['response']) {
-            return response()->json([
-                'status' => [
-                    'code' => '409',
-                    'message' => 'Duplicate',
-                    'total' => count($check_duplicate['result']),
-                ],
-                'result' => $check_duplicate['result'],
-            ], 409);
-        }else{
-            $result = $this->client->request('POST', $this->endpoint.'user/likevideo/update/'.$id, [
+        if ( $key === false) {
+            $message    = 'data not found';
+        } else {
+            unset($raw_user['like_video'][$key]);
+            $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id_user, [
                 'form_params' => [
-                    'user_id' => $request->user_id,
-                    'video_id' => $request->video_id,
+                    'like_video' => ( count($raw_user['like_video']) === 0 ? 0 : array_values($raw_user['like_video']) )
                 ]
             ]);
-
+            
+            //Check connection dbil
             if ($result->getStatusCode() != 200) {
                 return response()->json([
                     'status' => [
@@ -221,24 +172,15 @@ class UserLikeVideoController extends Controller
                     ]
                 ], $result->getStatusCode());
             }
-            
-            return response()->json(json_decode($result->getBody(), true));
-        }
-    }
 
-    public function destroy($id)
-    {
-        $result = $this->client->request('POST', $this->endpoint.'user/likevideo/delete/'.$id);
-
-        if ($result->getStatusCode() != 200) {
-            return response()->json([
-                'status' => [
-                    'code' => $result->getStatusCode(),
-                    'message' => 'Bad Gateway',
-                ]
-            ], $result->getStatusCode());
+            $message = 'data has been delete';
         }
-        
-        return response()->json(json_decode($result->getBody(), true));
+
+        return response()->json(array(
+            'status' => [
+                'code' => $result->getStatusCode(),
+                'message' => $message,
+            ]
+        ), 200);
     }
 }
