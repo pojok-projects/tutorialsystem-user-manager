@@ -1,0 +1,184 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use GuzzleHttp\Client;
+use Illuminate\Support\Str;
+use App\Traits\UserActivity;
+
+class UserSavedVideoController extends Controller
+{
+    use UserActivity;
+
+    private $client;
+    private $endpoint;
+
+    function __construct()
+    {
+        $this->client = new Client();
+        $this->endpoint = env('ENDPOINT_API');
+    }
+
+    public function create($id, Request $request)
+    {
+        //Rule request
+        $rules = [
+            'video_id' => 'required|uuid'
+        ];
+
+        $customMessages = [
+             'required' => 'Please fill attribute :attribute'
+        ];
+        $this->validate($request, $rules, $customMessages);
+
+        //Get list activity
+        $last_activity = json_decode($this->ListActivity($id, 'saved_video'));        
+
+        //Check connection dbil
+        if ($last_activity->status->code != 200) {
+            return response()->json([
+                'status' => [
+                    'code' => $last_activity->status->code,
+                    'message' => 'Bad Gateway',
+                ]
+            ], $last_activity->status->code);
+        }
+
+        //check duplicate
+        if (array_search($request->video_id, array_column($last_activity->result, 'video_id')) === false) {
+            
+            $uuid_saved_video = (string) Str::uuid();
+            $array_saved_video = array([
+                'id'                => $uuid_saved_video,
+                'video_id'          => $request->video_id,
+                'created_at'        => date(DATE_ATOM),
+                'updated_at'        => date(DATE_ATOM)
+            ]);
+
+            $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id, [
+                'form_params' => [
+                    'saved_video' => array_merge($last_activity->result, $array_saved_video)
+                ]
+            ]);
+            
+            //Check connection dbil
+            if ($result->getStatusCode() != 200) {
+                return response()->json([
+                    'status' => [
+                        'code' => $result->getStatusCode(),
+                        'message' => 'Bad Gateway',
+                    ]
+                ], $result->getStatusCode());
+            }
+
+            return response()->json(array(
+                'status' => [
+                    'code' => $result->getStatusCode(),
+                    'message' => 'data has been saved',
+                ],
+                'result' => [
+                    'id' => $uuid_saved_video
+                ]
+            ), 200);
+
+        } else {
+
+            return response()->json([
+                'status' => [
+                    'code' => 409,
+                    'message' => 'Duplicate',
+                ],
+                'result' => []
+            ], 409);
+            
+        }
+    }
+
+    public function show($id)
+    {
+        $result = $this->client->request('GET', $this->endpoint.'user/'.$id);
+
+        //Check connection dbil
+        if ($result->getStatusCode() != 200) {
+            return response()->json([
+                'status' => [
+                    'code' => $result->getStatusCode(),
+                    'message' => 'Bad Gateway',
+                ]
+            ], $result->getStatusCode());
+        }
+
+        $raw_user = json_decode($result->getBody(), true);
+
+        if ($raw_user['saved_video']) {
+            $message    = ', data has been found';
+            $total = count($raw_user['saved_video']);
+            $saved_video_result = $raw_user['saved_video'];
+        } else {
+            $message    = ', no data found';
+            $total = 0;
+            $saved_video_result = [];
+        }
+
+        $saved_video_data = array(
+            'status' => [
+                'code' => $result->getStatusCode(),
+                'message' => 'list query has been performed'.$message,
+                'total' => $total
+            ],
+            'result' => $saved_video_result
+        );
+
+        return response()->json($saved_video_data);
+    }
+
+    public function destroy($id_user, $id_saved_video)
+    {
+        $result = $this->client->request('GET', $this->endpoint.'user/'.$id_user);
+
+        //Check connection dbil
+        if ($result->getStatusCode() != 200) {
+            return response()->json([
+                'status' => [
+                    'code' => $result->getStatusCode(),
+                    'message' => 'Bad Gateway',
+                ]
+            ], $result->getStatusCode());
+        }
+
+        $raw_user = json_decode($result->getBody(), true);
+        $list_saved_video = $raw_user['saved_video'];
+        $key = array_search($id_saved_video, array_column($raw_user['saved_video'], 'id'));
+
+        if ( $key === false) {
+            $message    = 'data not found';
+        } else {
+            unset($raw_user['saved_video'][$key]);
+            $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id_user, [
+                'form_params' => [
+                    'saved_video' => ( count($raw_user['saved_video']) === 0 ? 0 : array_values($raw_user['saved_video']) )
+                ]
+            ]);
+            
+            //Check connection dbil
+            if ($result->getStatusCode() != 200) {
+                return response()->json([
+                    'status' => [
+                        'code' => $result->getStatusCode(),
+                        'message' => 'Bad Gateway',
+                    ]
+                ], $result->getStatusCode());
+            }
+
+            $message = 'data has been delete';
+        }
+
+        return response()->json(array(
+            'status' => [
+                'code' => $result->getStatusCode(),
+                'message' => $message,
+            ]
+        ), 200);
+    }
+}

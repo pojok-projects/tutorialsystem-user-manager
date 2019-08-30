@@ -1,0 +1,894 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# UPA (User Profile API)
+
+END POINT API User to DBIL.
+
+## User [/upa/v1/user]
+Represents User Details.
+
+-----
+
+## Table Structure End Points
+| URL                | Method | INFO              |
+| ------------------ | ------ | ----------------- |
+| `user`             | GET    | Get All Data      |
+| `user/store`       | POST   | Save Data         |
+| `user/{id}`        | GET    | Get Data by ID    |
+| `user/search`      | GET    | Search Data Query |
+| `user/update/{id}` | PUT    | Update Data by ID |
+| `user/delete/{id}` | DELETE | Delete Data by ID |
+
+-----
+
+## Requests Tables Parameters
+| Parameter         | type   | Status   | Description                       |
+| ----------------- | ------ | -------- | --------------------------------- |
+| `name`            | string | required | name of user                      |
+| `email`           | string | required | email of user                     |
+| `first_name`      | string | required | first name of user                |
+| `last_name`       | string | required | last name of user                 |
+| `birth_date`      | string | required | birth date of user                |
+| `gender`          | string | required | gender of user (male/female)      |
+| `photo_profile`   | string | optional | path of photo profile from user   |
+| `about`           | string | optional | about of user                     |
+| `website_link`    | string | optional | website link of user              |
+| `facebook_link`   | string | optional | facebook link of user             |
+| `twitter_link`    | string | optional | twitter link of user              |
+
+-----
+
+### Get All Data [GET /upa/v1/user]
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": "200",
+                "message": "index list query has been performed, data has been found",
+                "total": 1
+            },
+            "result": [
+                {
+                    "website_link": "https://example.com",
+                    "follower": null,
+                    "gender": "male",
+                    "photo_profile": "https://aws.s3.example/here/pojokproject.png",
+                    "twitter_link": "https://twitter.com/example",
+                    "birth_date": "2019-01-01",
+                    "about": "optional about",
+                    "facebook_link": "https://facebook.com/example",
+                    "playlists": null,
+                    "last_name": "Project",
+                    "created_at": "2019-08-24T22:43:47+07:00",
+                    "saved_video": null,
+                    "updated_at": "2019-08-24T22:50:12+07:00",
+                    "dislike_video": null,
+                    "following": null,
+                    "name": "Pojok Project",
+                    "id": "80438768-ef0c-4a07-8c32-8807cec3d930",
+                    "linkedin_link": "https://www.linkedin.com/example",
+                    "history_video": [
+                        {
+                            "created_at": "2019-08-24T22:48:16+07:00",
+                            "id": "becdbbe4-5a0c-4aa5-86b0-52f661d56816",
+                            "last_watch": 64,
+                            "updated_at": "2019-08-24T22:48:16+07:00",
+                            "video_id": "56b140a1-16a7-4fbb-b852-7365fbff7112"
+                        }
+                    ],
+                    "first_name": "Pojok",
+                    "email": "pojokan@gmail.com",
+                    "like_video": null
+                }
+            ]
+        }
+
+### Save Data [POST /upa/v1/user/store]
+
++ Request (application/json)
+
+        {
+            "name": "Pojok Project",
+            "email": "iniemailpojok@gmail.com",
+            "first_name": "Pojok",
+            "last_name": "Project",
+            "birth_date": "2019-01-01",
+            "gender": "male",
+            "photo_profile": "https://aws.s3.example/here/pojokproject.png",
+            "about": "optional about",
+            "website_link": "https://example.com",
+            "facebook_link": "https://facebook.com/example",
+            "twitter_link": "https://twitter.com/example",
+            "linkedin_link": "https://www.linkedin.com/example"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": "200",
+                "message": "data has been saved"
+            },
+            "result": {
+                "id": "80438768-ef0c-4a07-8c32-8807cec3d930"
+            }
+        }
+
+### Get Data by ID [GET /upa/v1/user/{id}]
+
++ Parameter
+    + id: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
+
++ Response 200 (application/json)
+
+        {
+            "website_link": "https://example.com",
+            "follower": null,
+            "gender": "male",
+            "photo_profile": "https://aws.s3.example/here/pojokproject.png",
+            "twitter_link": "https://twitter.com/example",
+            "birth_date": "2019-01-01",
+            "about": "optional about",
+            "facebook_link": "https://facebook.com/example",
+            "playlists": null,
+            "last_name": "Project",
+            "created_at": "2019-08-24T22:43:47+07:00",
+            "saved_video": null,
+            "updated_at": "2019-08-24T22:43:47+07:00",
+            "dislike_video": null,
+            "following": null,
+            "name": "Pojok Project",
+            "id": "80438768-ef0c-4a07-8c32-8807cec3d930",
+            "linkedin_link": "https://www.linkedin.com/example",
+            "history_video": null,
+            "first_name": "Pojok",
+            "email": "iniemailpojok@gmail.com",
+            "like_video": null
+        }
+
+### Search Data Query [GET /upa/v1/user/search?{paramenter1}={value1}&{paramenter2}={value2}]
+
+**Example:**
+* `https://api.example.com/upa/v1/user/search?name=jhon+cena&last_name=cena`
+
++ Parameter
+    + paramenter1: `name` (string) - Parameter 1
+    + value1: `jhon+cena` (string) - Value 1
+    + paramenter2: `last_name` (string) - Parameter 2
+    + value2: `cena` (string) - Value 2
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": "200",
+                "message": "search query has been performed, data has been found",
+                "total": 1
+            },
+            "result": [
+                {
+                    "website_link": "https://example.com",
+                    "follower": null,
+                    "gender": "male",
+                    "photo_profile": "https://aws.s3.example/here/pojokproject.png",
+                    "twitter_link": "https://twitter.com/example",
+                    "birth_date": "2019-01-01",
+                    "about": "optional about",
+                    "facebook_link": "https://facebook.com/example",
+                    "playlists": null,
+                    "last_name": "cena",
+                    "created_at": "2019-08-24T22:43:47+07:00",
+                    "saved_video": null,
+                    "updated_at": "2019-08-24T22:43:47+07:00",
+                    "dislike_video": null,
+                    "following": null,
+                    "name": "jhon cena",
+                    "id": "80438768-ef0c-4a07-8c32-8807cec3d930",
+                    "linkedin_link": "https://www.linkedin.com/example",
+                    "history_video": null,
+                    "first_name": "jhon",
+                    "email": "iniemailpojok@gmail.com",
+                    "like_video": null
+                }
+            ]
+        }
+        
+### Update Data by ID [PUT /upa/v1/user/update/{id}]
+
++ Parameter
+    + id: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
+
++ Request (application/json)
+
+        {
+        "email": "pojokan@gmail.com",
+        "history_video": [
+                {
+                    "id": "becdbbe4-5a0c-4aa5-86b0-52f661d56816",
+                    "video_id": "56b140a1-16a7-4fbb-b852-7365fbff7112",
+                    "last_watch": 64,
+                    "created_at": "2019-08-24T22:48:16+07:00",
+                    "updated_at": "2019-08-24T22:48:16+07:00"
+                }
+            ]
+        }
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": "200",
+                "message": "data has been updated"
+            },
+            "result": {
+                "id": "80438768-ef0c-4a07-8c32-8807cec3d930"
+            }
+        }
+
+### Delete Data by ID [DELETE /upa/v1/user/delete/{id}]
+
++ Parameter
+    + id: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": "200",
+                "message": "data has been deleted"
+            },
+            "result": {
+                "id": "80438768-ef0c-4a07-8c32-8807cec3d930"
+            }
+        }
+        
+        
+## User Following [/upa/v1/user/following]
+
+Represents User Following Details. 
+
+-----
+
+## Table Structure End Points
+| URL                                              | Method | INFO                               |
+| ------------------------------------------------ | ------ | ---------------------------------- |
+| `user/following/store/{id_user}`                 | POST   | Save Data                          |
+| `user/following/{id_user}`                       | GET    | Get Data by ID User                |
+| `user/following/delete/{id_user}/{id_following}` | DELETE | Delete Data by ID and ID Following  |
+
+-----
+
+**Following Table Parameters:**
+| Parameter           | type   | Status   | Description               |
+| ------------------- | ------ | -------- | ------------------------- |
+| `following_user_id` | string | required | User ID of Following User |
+
+-----
+
+### Save Data [POST /upa/v1/user/following/store/{id_user}]
+
++ Parameter
+    + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
+    
++ Request (application/json)
+
+        {
+            "following_user_id": "e9356d93-399d-4538-8aa7-973e179ef3c2"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": "200",
+                "message": "data has been saved"
+            },
+            "result": {
+                "id": "e9356d93-399d-4538-8aa7-973e179ef3c2"
+            }
+        }
+
+### Get All Data Following User [GET /upa/v1/user/following/{id_user}]
+
++ Parameter
+    + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
+
++ Response 200 (application/json)
+
+    {
+        "status": {
+            "code": 200,
+            "message": "list query has been performed, data has been found",
+            "total": 1
+        },
+        "result": [
+            {
+                "created_at": "2019-08-26T15:59:02+00:00",
+                "id": "9fe9703f-6950-4902-b450-decc2baecf0d",
+                "following_user_id": "0b5d0a9a-decd-4d94-93e5-a09e752de9ad",
+                "updated_at": "2019-08-26T15:59:02+00:00"
+            }
+        ]
+    }
+
+### Delete Data Following User [DELETE /upa/v1/user/following/delete/{id_user}/{id_following}]
+
++ Parameter
+    + id_user: '80438768-ef0c-4a07-8c32-8807cec3d930' (string, required) - Id of User
+    + id_following: 'e9356d93-399d-4538-8aa7-973e179ef3c2' (string, required) - Id of Following
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": "200",
+                "message": "data has been delete"
+            }
+        }
+
+## User Follower [/upa/v1/user/follower]
+
+Represents User Follower Details. 
+
+-----
+
+## Table Structure End Points
+| URL                                              | Method | INFO                                    |
+| ------------------------------------------------ | ------ | --------------------------------------- |
+| `user/follower/store/{id_user}`                  | POST   | Save Data                               |
+| `user/follower/{id_user}`                        | GET    | Get Data by ID User                     |
+| `user/follower/delete/{id_user}/{id_follower}`   | DELETE | Delete Data by ID User and ID Follower  |
+
+-----
+
+**Follower Table Parameters:**
+| Parameter           | type   | Status   | Description               |
+| ------------------- | ------ | -------- | ------------------------- |
+| `follower_user_id`  | string | required | User ID of Follower User  |
+
+-----
+
+### Save Data [POST /upa/v1/user/follower/store/{id_user}]
+
++ Parameter
+    + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
+    
++ Request (application/json)
+
+        {
+            "follower_user_id": "e9356d93-399d-4538-8aa7-973e179ef3c2"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": "200",
+                "message": "data has been saved"
+            },
+            "result": {
+                "id": "e9356d93-399d-4538-8aa7-973e179ef3c2"
+            }
+        }
+
+### Get All Data Follower User [GET /upa/v1/user/follower/{id_user}]
+
++ Parameter
+    + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
+
++ Response 200 (application/json)
+
+    {
+        "status": {
+            "code": 200,
+            "message": "list query has been performed, data has been found",
+            "total": 1
+        },
+        "result": [
+            {
+                "created_at": "2019-08-26T15:59:02+00:00",
+                "id": "9fe9703f-6950-4902-b450-decc2baecf0d",
+                "follower_user_id": "0b5d0a9a-decd-4d94-93e5-a09e752de9ad",
+                "updated_at": "2019-08-26T15:59:02+00:00"
+            }
+        ]
+    }
+
+### Delete Data Follower User [DELETE /upa/v1/user/follower/delete/{id_user}/{id_follower}]
+
++ Parameter
+    + id_user: '80438768-ef0c-4a07-8c32-8807cec3d930' (string, required) - Id of User
+    + id_follower: 'e9356d93-399d-4538-8aa7-973e179ef3c2' (string, required) - Id of Follower
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": "200",
+                "message": "data has been delete"
+            }
+        }
+
+## User Like Video [/upa/v1/user/likevideo]
+
+Represents User Like Video Details. 
+
+-----
+
+## Table Structure End Points
+| URL                                               | Method | INFO                                       |
+| ------------------------------------------------- | ------ | --------------------------------------- |
+| `user/likevideo/store/{id_user}`                  | POST   | Save Data                              |
+| `user/likevideo/{id_user}`                        | GET    | Get Data by ID User                    |
+| `user/likevideo/delete/{id_user}/{id_like_video}` | DELETE | Delete Data by ID User and ID Like Video  |
+
+-----
+
+**Like Video Table Parameters:**
+| Parameter           | type   | Status   | Description               |
+| ------------------- | ------ | -------- | ------------------------- |
+| `user_id`           | string | required | User ID                   |
+| `video_id`          | string | required | ID of Metadata            |
+
+-----
+
+### Save Data [POST /upa/v1/user/likevideo/store/{id_user}]
+
++ Parameter
+    + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
+    
++ Request (application/json)
+
+        {
+            "user_id": "c6622fab-3e36-42f7-a9be-8d66e31dee6b",
+            "video_id": "2a7f9cd1-6344-4a95-8b30-cdbc2790d058"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": 200,
+                "message": "data has been saved"
+            },
+            "result": {
+                "id": "7ac87671-9c47-4968-9b35-c534a4cbb6da"
+            }
+        }
+
+### Get All Data Like Video User [GET /upa/v1/user/likevideo/{id_user}]
+
++ Parameter
+    + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (uuid, required) - Id of User
+
++ Response 200 (application/json)
+
+    {
+    "status": {
+        "code": 200,
+        "message": "list query has been performed, data has been found",
+        "total": 1
+    },
+    "result": [
+        {
+            "created_at": "2019-08-28T14:59:21+00:00",
+            "id": "7ac87671-9c47-4968-9b35-c534a4cbb6da",
+            "updated_at": "2019-08-28T14:59:21+00:00",
+            "user_id": "c6622fab-3e36-42f7-a9be-8d66e31dee6b",
+            "video_id": "2a7f9cd1-6344-4a95-8b30-cdbc2790d058"
+        }
+    ]
+}
+
+### Delete Data Like Video User [DELETE /upa/v1/user/likevideo/delete/{id_user}/{id_like_video}]
+
++ Parameter
+    + id_user: '80438768-ef0c-4a07-8c32-8807cec3d930' (string, required) - Id of User
+    + id_like_video: '7ac87671-9c47-4968-9b35-c534a4cbb6da' (string, required) - Id of Like Video
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": "200",
+                "message": "data has been delete"
+            }
+        }
+    
+## User Dislike Video [/upa/v1/user/dislikevideo]
+
+Represents User Dislike Video Details. 
+
+-----
+
+## Table Structure End Points
+| URL                                               | Method | INFO                                       |
+| ------------------------------------------------- | ------ | --------------------------------------- |
+| `user/dislikevideo/store/{id_user}`                   | POST   | Save Data                              |
+| `user/dislikevideo/{id_user}`                         | GET    | Get Data by ID User                    |
+| `user/dislikevideo/delete/{id_user}/{id_dislike_video}` | DELETE | Delete Data by ID User and ID Disike Video  |
+
+-----
+
+**Dislike Video Table Parameters:**
+| Parameter           | type   | Status   | Description               |
+| ------------------- | ------ | -------- | ------------------------- |
+| `user_id`           | string | required | User ID                   |
+| `video_id`          | string | required | ID of Metadata            |
+
+-----
+
+### Save Data [POST /upa/v1/user/dislikevideo/store/{id_user}]
+
++ Parameter
+    + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
+    
++ Request (application/json)
+
+        {
+            "user_id": "c6622fab-3e36-42f7-a9be-8d66e31dee6b",
+            "video_id": "2a7f9cd1-6344-4a95-8b30-cdbc2790d058"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": 200,
+                "message": "data has been saved"
+            },
+            "result": {
+                "id": "778b1285-a7f8-434f-ab5d-9130f76ebbda"
+            }
+        }
+
+### Get All Data Like Video User [GET /upa/v1/user/dislikevideo/{id_user}]
+
++ Parameter
+    + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (uuid, required) - Id of User
+
++ Response 200 (application/json)
+
+    {
+    "status": {
+        "code": 200,
+        "message": "list query has been performed, data has been found",
+        "total": 1
+    },
+    "result": [
+        {
+            "created_at": "2019-08-28T15:09:18+00:00",
+            "id": "778b1285-a7f8-434f-ab5d-9130f76ebbda",
+            "updated_at": "2019-08-28T15:09:18+00:00",
+            "user_id": "c6622fab-3e36-42f7-a9be-8d66e31dee6b",
+            "video_id": "2a7f9cd1-6344-4a95-8b30-cdbc2790d058"
+        }
+    ]
+}
+
+### Delete Data Like Video User [DELETE /upa/v1/user/dislikevideo/delete/{id_user}/{id_dislike_video}]
+
++ Parameter
+    + id_user: '80438768-ef0c-4a07-8c32-8807cec3d930' (string, required) - Id of User
+    + id_dislike_video: '778b1285-a7f8-434f-ab5d-9130f76ebbda' (string, required) - Id of Dislike Video
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": "200",
+                "message": "data has been delete"
+            }
+        }
+        
+## User Saved Video [/upa/v1/user/savedvideo]
+
+Represents User Saved Video Details. 
+
+-----
+
+## Table Structure End Points
+| URL                                               | Method | INFO                                       |
+| ------------------------------------------------- | ------ | --------------------------------------- |
+| `user/savedvideo/store/{id_user}`                     | POST   | Save Data                              |
+| `user/savedvideo/{id_user}`                       | GET    | Get Data by ID User                    |
+| `user/savedvideo/delete/{id_user}/{id_saved_video}` | DELETE | Delete Data by ID User and ID Saved Video  |
+
+-----
+
+**Saved Video Table Parameters:**
+| Parameter           | type   | Status   | Description               |
+| ------------------- | ------ | -------- | ------------------------- |
+| `video_id`          | string | required | ID of Metadata            |
+
+-----
+
+### Save Data [POST /upa/v1/user/savedvideo/store/{id_user}]
+
++ Parameter
+    + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
+    
++ Request (application/json)
+
+        {
+            "video_id": "2a7f9cd1-6344-4a95-8b30-cdbc2790d058"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": 200,
+                "message": "data has been saved"
+            },
+            "result": {
+                "id": "d73e0747-29db-47d4-a565-a2b235a2c9b4"
+            }
+        }
+
+### Get All Data Saved Video User [GET /upa/v1/user/savedvideo/{id_user}]
+
++ Parameter
+    + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (uuid, required) - Id of User
+
++ Response 200 (application/json)
+
+    {
+    "status": {
+        "code": 200,
+        "message": "list query has been performed, data has been found",
+        "total": 1
+    },
+    "result": [
+        {
+            "created_at": "2019-08-28T15:17:21+00:00",
+            "id": "d73e0747-29db-47d4-a565-a2b235a2c9b4",
+            "updated_at": "2019-08-28T15:17:21+00:00",
+            "video_id": "2a7f9cd1-6344-4a95-8b30-cdbc2790d058"
+        }
+    ]
+}
+
+### Delete Data Saved Video User [DELETE /upa/v1/user/savedvideo/delete/{id_user}/{id_saved_video}]
+
++ Parameter
+    + id_user: '80438768-ef0c-4a07-8c32-8807cec3d930' (string, required) - Id of User
+    + id_saved_video: 'd73e0747-29db-47d4-a565-a2b235a2c9b4' (string, required) - Id of Saved Video
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": "200",
+                "message": "data has been delete"
+            }
+        }
+
+## User History Video [/upa/v1/user/historyvideo]
+
+Represents User History Video Details. 
+
+-----
+
+## Table Structure End Points
+| URL                                               | Method | INFO                                       |
+| ------------------------------------------------- | ------ | --------------------------------------- |
+| `user/historyvideo/store/{id_user}`                   | POST   | Save Data                              |
+| `user/historyvideo/{id_user}`                         | GET    | Get Data by ID User                    |
+| `user/historyvideo/update/{id_user}/{id_history_video}` | PUT | Update Data by ID User and ID History Video  |
+| `user/historyvideo/delete/{id_user}/{id_history_video}` | DELETE | Delete Data by ID User and ID History Video  |
+
+-----
+
+**User History Video Table Parameters:**
+| Parameter           | type   | Status   | Description               |
+| ------------------- | ------ | -------- | ------------------------- |
+| `video_id`          | string | required | ID of Metadata            |
+| `last_watch`        | string | required | Time of Last Watch Video  |
+
+-----
+
+### Save Data [POST /upa/v1/user/historyvideo/store/{id_user}]
+
++ Parameter
+    + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
+    
++ Request (application/json)
+
+        {
+            "video_id": "2a7f9cd1-6344-4a95-8b30-cdbc2790d058",
+            "last_watch": "10"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": 200,
+                "message": "data has been saved"
+            },
+            "result": {
+                "id": "143056de-c11c-4d1d-8d54-b78ad83b0272"
+            }
+        }
+
+### Get All Data History Video User [GET /upa/v1/user/historyvideo/{id_user}]
+
++ Parameter
+    + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (uuid, required) - Id of User
+
++ Response 200 (application/json)
+
+    {
+    "status": {
+        "code": 200,
+        "message": "list query has been performed, data has been found",
+        "total": 1
+    },
+    "result": [
+        {
+            "created_at": "2019-08-28T15:25:48+00:00",
+            "id": "143056de-c11c-4d1d-8d54-b78ad83b0272",
+            "last_watch": "10",
+            "updated_at": "2019-08-28T15:25:48+00:00",
+            "video_id": "2a7f9cd1-6344-4a95-8b30-cdbc2790d058"
+        }
+    ]
+}
+
+### Update Data History Video User [PUT /upa/v1/user/historyvideo/update/{id_user}/{id_history_video}]
+
++ Parameter
+    + id_user: '80438768-ef0c-4a07-8c32-8807cec3d930' (string, required) - Id of User
+    + id_history_video: '143056de-c11c-4d1d-8d54-b78ad83b0272' (string, required) - Id of History Video
+
++ Request (application/json)
+
+        {
+            "last_watch": "11"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": "200",
+                "message": "data has been update"
+            },
+            "result": {
+                "id": "143056de-c11c-4d1d-8d54-b78ad83b0272"
+            }
+        }
+
+### Delete Data History Video User [DELETE /upa/v1/user/historyvideo/delete/{id_user}/{id_history_video}]
+
++ Parameter
+    + id_user: '80438768-ef0c-4a07-8c32-8807cec3d930' (string, required) - Id of User
+    + id_history_video: '143056de-c11c-4d1d-8d54-b78ad83b0272' (string, required) - Id of History Video
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": "200",
+                "message": "data has been delete"
+            }
+        }
+        
+## User Playlists [/upa/v1/user/playlists]
+
+Represents User Playlists Details. 
+
+-----
+
+## Table Structure End Points
+|URL    | Method | INFO |
+| ------------------------------------------------- | ------ | --------------------------------------- |
+| `user/playlists/store/{id_user}`| POST   | Save Data |
+| `user/playlists/{id_user}`| GET    | Get Data by ID User |
+| `user/playlists/update/{id_user}/{id_playlists}` | PUT | Update Data by ID User and ID Playlists  |
+| `user/playlists/delete/{id_user}/{id_playlists}` | DELETE | Delete Data by ID User and ID Playlists  |
+
+-----
+
+**User Playlists Table Parameters:**
+| Parameter             | type   | Status   | Description                         |
+| --------------------- | ------ | -------- | ----------------------------------- |
+| `playlistcategory_id` | string | required | ID From content playlists category  |
+| `metadata_id`         | string | required | ID From content metadata            |
+| `order_list`          | int    | Optional | Order Playlist                      |
+| `last_watch`          | int    | Optional | Remember Last Watch in second       |
+
+-----
+
+### Save Data [POST /upa/v1/user/playlists/store/{id_user}]
+
++ Parameter
+    + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
+    
++ Request (application/json)
+
+        {
+            "playlistcategory_id": "2997b396-ae5a-4b8b-9395-f31cca5e235a",
+            "metadata_id": "5180bd01-773a-4840-8db7-4d6db68569cc"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": 200,
+                "message": "data has been saved"
+            },
+            "result": {
+                "id": "ce557c73-36fe-4a8d-8316-8a2ca7f174cc"
+            }
+        }
+
+### Get All Data Playlists User [GET /upa/v1/user/playlists/{id_user}]
+
++ Parameter
+    + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (uuid, required) - Id of User
+
++ Response 200 (application/json)
+
+    {
+    "status": {
+        "code": 200,
+        "message": "list query has been performed, data has been found",
+        "total": 1
+    },
+    "result": [
+        {
+            "updated_at": "2019-08-28T15:42:45+00:00",
+            "metadata_id": "5180bd01-773a-4840-8db7-4d6db68569cc",
+            "created_at": "2019-08-28T15:42:45+00:00",
+            "id": "ce557c73-36fe-4a8d-8316-8a2ca7f174cc",
+            "playlistcategory_id": "2997b396-ae5a-4b8b-9395-f31cca5e235a",
+            "last_watch": "0",
+            "order_list": "0"
+        }
+    ]
+}
+
+### Update Data Playlists User [PUT /upa/v1/user/playlists/update/{id_user}/{id_playlists}]
+
++ Parameter
+    + id_user: '80438768-ef0c-4a07-8c32-8807cec3d930' (string, required) - Id of User
+    + id_playlists: '1ce557c73-36fe-4a8d-8316-8a2ca7f174cc' (string, required) - Id of Playlists
+
++ Request (application/json)
+
+        {
+            "last_watch": 99,
+            "order_list": 2
+        }
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": "200",
+                "message": "data has been update"
+            },
+            "result": {
+                "id": "ce557c73-36fe-4a8d-8316-8a2ca7f174cc"
+            }
+        }
+
+### Delete Data Playlists User [DELETE /upa/v1/user/playlists/delete/{id_user}/{id_playlists}]
+
++ Parameter
+    + id_user: '80438768-ef0c-4a07-8c32-8807cec3d930' (string, required) - Id of User
+    + id_playlists: 'ce557c73-36fe-4a8d-8316-8a2ca7f174cc' (string, required) - Id of Playlists
+
++ Response 200 (application/json)
+
+        {
+            "status": {
+                "code": "200",
+                "message": "data has been delete"
+            }
+        }
