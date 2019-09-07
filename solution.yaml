@@ -160,7 +160,7 @@ Resources:
         Type: AWS::Lambda::Permission
         Properties:
             Action: lambda:invokeFunction
-            FunctionName: !Sub ${rCatmLambda.Arn}
+            FunctionName: !Sub ${rUsermLambda.Arn}
             Principal: apigateway.amazonaws.com
             SourceArn: !Sub
                 - arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGatewayRef}/*
@@ -189,7 +189,7 @@ Resources:
             Integration:
                 Type: AWS_PROXY
                 IntegrationHttpMethod: POST
-                Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${rCatmLambda.Arn}/invocations'
+                Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${rUsermLambda.Arn}/invocations'
             MethodResponses: []
 
     rApiGatewayResponseDefault4XX:
