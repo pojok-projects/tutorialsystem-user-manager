@@ -183,6 +183,7 @@ class UserPlaylistsController extends Controller
             $last_activity->result[$key]->metadata_id           = ($request->metadata_id ? $request->metadata_id : $last_activity->result[$key]->metadata_id);
             $last_activity->result[$key]->order_list            = ($request->order_list ? $request->order_list : $last_activity->result[$key]->order_list);
             $last_activity->result[$key]->last_watch            = ($request->last_watch ? $request->last_watch : $last_activity->result[$key]->last_watch);
+            $last_activity->result[$key]->updated_at            = date(DATE_ATOM);
     
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id_user, [
                 'form_params' => [
