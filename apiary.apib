@@ -1,11 +1,20 @@
 FORMAT: 1A
-HOST: http://polls.apiblueprint.org/
+HOST: https://api.tutorialinaja.tech/upa/v1/
 
-# UPA (User Profile API)
+# Tutorialinaja - User Manager
 
-END POINT API User to DBIL.
+END POINT User API proxying through Database Interface Layer
 
-## User [/upa/v1/user]
+## API Host
+* HOST: https://api.tutorialinaja.tech
+
+## API Version
+* /v1
+
+## API Main End Point
+* https://api.tutorialinaja.tech/upa/v1/
+
+## User [/user]
 Represents User Details.
 
 -----
@@ -39,7 +48,7 @@ Represents User Details.
 
 -----
 
-### Get All Data [GET /upa/v1/user]
+### Get All Data [GET /user]
 
 + Response 200 (application/json)
 
@@ -85,7 +94,7 @@ Represents User Details.
             ]
         }
 
-### Save Data [POST /upa/v1/user/store]
+### Save Data [POST /user/store]
 
 + Request (application/json)
 
@@ -116,7 +125,7 @@ Represents User Details.
             }
         }
 
-### Get Data by ID [GET /upa/v1/user/{id}]
+### Get Data by ID [GET /user/{id}]
 
 + Parameter
     + id: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
@@ -148,10 +157,10 @@ Represents User Details.
             "like_video": null
         }
 
-### Search Data Query [GET /upa/v1/user/search?{paramenter1}={value1}&{paramenter2}={value2}]
+### Search Data Query [GET /user/search?{paramenter1}={value1}&{paramenter2}={value2}]
 
 **Example:**
-* `https://api.example.com/upa/v1/user/search?name=jhon+cena&last_name=cena`
+* `https://api.tutorialinaja.tech/upa/v1/user/search?name=jhon+cena&last_name=cena`
 
 + Parameter
     + paramenter1: `name` (string) - Parameter 1
@@ -195,7 +204,7 @@ Represents User Details.
             ]
         }
         
-### Update Data by ID [PUT /upa/v1/user/update/{id}]
+### Update Data by ID [PUT /user/update/{id}]
 
 + Parameter
     + id: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
@@ -227,7 +236,7 @@ Represents User Details.
             }
         }
 
-### Delete Data by ID [DELETE /upa/v1/user/delete/{id}]
+### Delete Data by ID [DELETE /user/delete/{id}]
 
 + Parameter
     + id: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
@@ -245,7 +254,7 @@ Represents User Details.
         }
         
         
-## User Following [/upa/v1/user/following]
+## User Following [/user/following]
 
 Represents User Following Details. 
 
@@ -267,7 +276,7 @@ Represents User Following Details.
 
 -----
 
-### Save Data [POST /upa/v1/user/following/store/{id_user}]
+### Save Data [POST /user/following/store/{id_user}]
 
 + Parameter
     + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
@@ -290,7 +299,7 @@ Represents User Following Details.
             }
         }
 
-### Get All Data Following User [GET /upa/v1/user/following/{id_user}]
+### Get All Data Following User [GET /user/following/{id_user}]
 
 + Parameter
     + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
@@ -313,7 +322,7 @@ Represents User Following Details.
         ]
     }
 
-### Delete Data Following User [DELETE /upa/v1/user/following/delete/{id_user}/{id_following}]
+### Delete Data Following User [DELETE /user/following/delete/{id_user}/{id_following}]
 
 + Parameter
     + id_user: '80438768-ef0c-4a07-8c32-8807cec3d930' (string, required) - Id of User
@@ -328,7 +337,7 @@ Represents User Following Details.
             }
         }
 
-## User Follower [/upa/v1/user/follower]
+## User Follower [/user/follower]
 
 Represents User Follower Details. 
 
@@ -350,7 +359,7 @@ Represents User Follower Details.
 
 -----
 
-### Save Data [POST /upa/v1/user/follower/store/{id_user}]
+### Save Data [POST /user/follower/store/{id_user}]
 
 + Parameter
     + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
@@ -373,7 +382,7 @@ Represents User Follower Details.
             }
         }
 
-### Get All Data Follower User [GET /upa/v1/user/follower/{id_user}]
+### Get All Data Follower User [GET /user/follower/{id_user}]
 
 + Parameter
     + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
@@ -396,7 +405,7 @@ Represents User Follower Details.
         ]
     }
 
-### Delete Data Follower User [DELETE /upa/v1/user/follower/delete/{id_user}/{id_follower}]
+### Delete Data Follower User [DELETE /user/follower/delete/{id_user}/{id_follower}]
 
 + Parameter
     + id_user: '80438768-ef0c-4a07-8c32-8807cec3d930' (string, required) - Id of User
@@ -411,7 +420,7 @@ Represents User Follower Details.
             }
         }
 
-## User Like Video [/upa/v1/user/likevideo]
+## User Like Video [/user/likevideo]
 
 Represents User Like Video Details. 
 
@@ -434,7 +443,7 @@ Represents User Like Video Details.
 
 -----
 
-### Save Data [POST /upa/v1/user/likevideo/store/{id_user}]
+### Save Data [POST /user/likevideo/store/{id_user}]
 
 + Parameter
     + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
@@ -458,7 +467,7 @@ Represents User Like Video Details.
             }
         }
 
-### Get All Data Like Video User [GET /upa/v1/user/likevideo/{id_user}]
+### Get All Data Like Video User [GET /user/likevideo/{id_user}]
 
 + Parameter
     + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (uuid, required) - Id of User
@@ -482,7 +491,7 @@ Represents User Like Video Details.
     ]
 }
 
-### Delete Data Like Video User [DELETE /upa/v1/user/likevideo/delete/{id_user}/{id_like_video}]
+### Delete Data Like Video User [DELETE /user/likevideo/delete/{id_user}/{id_like_video}]
 
 + Parameter
     + id_user: '80438768-ef0c-4a07-8c32-8807cec3d930' (string, required) - Id of User
@@ -497,7 +506,7 @@ Represents User Like Video Details.
             }
         }
     
-## User Dislike Video [/upa/v1/user/dislikevideo]
+## User Dislike Video [/user/dislikevideo]
 
 Represents User Dislike Video Details. 
 
@@ -520,7 +529,7 @@ Represents User Dislike Video Details.
 
 -----
 
-### Save Data [POST /upa/v1/user/dislikevideo/store/{id_user}]
+### Save Data [POST /user/dislikevideo/store/{id_user}]
 
 + Parameter
     + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
@@ -544,7 +553,7 @@ Represents User Dislike Video Details.
             }
         }
 
-### Get All Data Like Video User [GET /upa/v1/user/dislikevideo/{id_user}]
+### Get All Data Like Video User [GET /user/dislikevideo/{id_user}]
 
 + Parameter
     + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (uuid, required) - Id of User
@@ -568,7 +577,7 @@ Represents User Dislike Video Details.
     ]
 }
 
-### Delete Data Like Video User [DELETE /upa/v1/user/dislikevideo/delete/{id_user}/{id_dislike_video}]
+### Delete Data Like Video User [DELETE /user/dislikevideo/delete/{id_user}/{id_dislike_video}]
 
 + Parameter
     + id_user: '80438768-ef0c-4a07-8c32-8807cec3d930' (string, required) - Id of User
@@ -583,7 +592,7 @@ Represents User Dislike Video Details.
             }
         }
         
-## User Saved Video [/upa/v1/user/savedvideo]
+## User Saved Video [/user/savedvideo]
 
 Represents User Saved Video Details. 
 
@@ -605,7 +614,7 @@ Represents User Saved Video Details.
 
 -----
 
-### Save Data [POST /upa/v1/user/savedvideo/store/{id_user}]
+### Save Data [POST /user/savedvideo/store/{id_user}]
 
 + Parameter
     + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
@@ -628,7 +637,7 @@ Represents User Saved Video Details.
             }
         }
 
-### Get All Data Saved Video User [GET /upa/v1/user/savedvideo/{id_user}]
+### Get All Data Saved Video User [GET /user/savedvideo/{id_user}]
 
 + Parameter
     + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (uuid, required) - Id of User
@@ -651,7 +660,7 @@ Represents User Saved Video Details.
     ]
 }
 
-### Delete Data Saved Video User [DELETE /upa/v1/user/savedvideo/delete/{id_user}/{id_saved_video}]
+### Delete Data Saved Video User [DELETE /user/savedvideo/delete/{id_user}/{id_saved_video}]
 
 + Parameter
     + id_user: '80438768-ef0c-4a07-8c32-8807cec3d930' (string, required) - Id of User
@@ -666,7 +675,7 @@ Represents User Saved Video Details.
             }
         }
 
-## User History Video [/upa/v1/user/historyvideo]
+## User History Video [/user/historyvideo]
 
 Represents User History Video Details. 
 
@@ -690,7 +699,7 @@ Represents User History Video Details.
 
 -----
 
-### Save Data [POST /upa/v1/user/historyvideo/store/{id_user}]
+### Save Data [POST /user/historyvideo/store/{id_user}]
 
 + Parameter
     + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
@@ -714,7 +723,7 @@ Represents User History Video Details.
             }
         }
 
-### Get All Data History Video User [GET /upa/v1/user/historyvideo/{id_user}]
+### Get All Data History Video User [GET /user/historyvideo/{id_user}]
 
 + Parameter
     + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (uuid, required) - Id of User
@@ -738,7 +747,7 @@ Represents User History Video Details.
     ]
 }
 
-### Update Data History Video User [PUT /upa/v1/user/historyvideo/update/{id_user}/{id_history_video}]
+### Update Data History Video User [PUT /user/historyvideo/update/{id_user}/{id_history_video}]
 
 + Parameter
     + id_user: '80438768-ef0c-4a07-8c32-8807cec3d930' (string, required) - Id of User
@@ -762,7 +771,7 @@ Represents User History Video Details.
             }
         }
 
-### Delete Data History Video User [DELETE /upa/v1/user/historyvideo/delete/{id_user}/{id_history_video}]
+### Delete Data History Video User [DELETE /user/historyvideo/delete/{id_user}/{id_history_video}]
 
 + Parameter
     + id_user: '80438768-ef0c-4a07-8c32-8807cec3d930' (string, required) - Id of User
@@ -777,7 +786,7 @@ Represents User History Video Details.
             }
         }
         
-## User Playlists [/upa/v1/user/playlists]
+## User Playlists [/user/playlists]
 
 Represents User Playlists Details. 
 
@@ -803,7 +812,7 @@ Represents User Playlists Details.
 
 -----
 
-### Save Data [POST /upa/v1/user/playlists/store/{id_user}]
+### Save Data [POST /user/playlists/store/{id_user}]
 
 + Parameter
     + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (string, required) - Id of User
@@ -827,7 +836,7 @@ Represents User Playlists Details.
             }
         }
 
-### Get All Data Playlists User [GET /upa/v1/user/playlists/{id_user}]
+### Get All Data Playlists User [GET /user/playlists/{id_user}]
 
 + Parameter
     + id_user: `80438768-ef0c-4a07-8c32-8807cec3d930` (uuid, required) - Id of User
@@ -853,7 +862,7 @@ Represents User Playlists Details.
     ]
 }
 
-### Update Data Playlists User [PUT /upa/v1/user/playlists/update/{id_user}/{id_playlists}]
+### Update Data Playlists User [PUT /user/playlists/update/{id_user}/{id_playlists}]
 
 + Parameter
     + id_user: '80438768-ef0c-4a07-8c32-8807cec3d930' (string, required) - Id of User
@@ -878,7 +887,7 @@ Represents User Playlists Details.
             }
         }
 
-### Delete Data Playlists User [DELETE /upa/v1/user/playlists/delete/{id_user}/{id_playlists}]
+### Delete Data Playlists User [DELETE /user/playlists/delete/{id_user}/{id_playlists}]
 
 + Parameter
     + id_user: '80438768-ef0c-4a07-8c32-8807cec3d930' (string, required) - Id of User

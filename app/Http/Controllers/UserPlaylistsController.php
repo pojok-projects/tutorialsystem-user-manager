@@ -141,8 +141,10 @@ class UserPlaylistsController extends Controller
     { 
         //Rule request
         $rules = [
-            'order_list' => 'integer',
-            'last_watch' => 'integer'
+            'playlistcategory_id'   => 'uuid',
+            'metadata_id'           => 'uuid',
+            'order_list'            => 'integer',
+            'last_watch'            => 'integer'
         ];
 
         $customMessages = [
@@ -176,9 +178,12 @@ class UserPlaylistsController extends Controller
 
         } else {
 
-            //update order_list and last_watch
-            $last_activity->result[$key]->order_list = ($request->order_list ? $request->order_list : $last_activity->result[$key]->order_list);
-            $last_activity->result[$key]->last_watch = ($request->last_watch ? $request->last_watch : $last_activity->result[$key]->last_watch);
+            //update playlistcategory_id, metadata_id, order_list and last_watch
+            $last_activity->result[$key]->playlistcategory_id   = ($request->playlistcategory_id ? $request->playlistcategory_id : $last_activity->result[$key]->playlistcategory_id);
+            $last_activity->result[$key]->metadata_id           = ($request->metadata_id ? $request->metadata_id : $last_activity->result[$key]->metadata_id);
+            $last_activity->result[$key]->order_list            = ($request->order_list ? $request->order_list : $last_activity->result[$key]->order_list);
+            $last_activity->result[$key]->last_watch            = ($request->last_watch ? $request->last_watch : $last_activity->result[$key]->last_watch);
+            $last_activity->result[$key]->updated_at            = date(DATE_ATOM);
     
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id_user, [
                 'form_params' => [
