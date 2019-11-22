@@ -57,7 +57,7 @@ class UserSavedVideoController extends Controller
             ]);
 
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id, [
-                'form_params' => [
+                'json' => [
                     'saved_video' => array_merge($last_activity->result, $array_saved_video)
                 ]
             ]);
@@ -156,7 +156,7 @@ class UserSavedVideoController extends Controller
         } else {
             unset($raw_user['saved_video'][$key]);
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id_user, [
-                'form_params' => [
+                'json' => [
                     'saved_video' => ( count($raw_user['saved_video']) === 0 ? 0 : array_values($raw_user['saved_video']) )
                 ]
             ]);

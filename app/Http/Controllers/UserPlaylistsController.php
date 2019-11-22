@@ -61,7 +61,7 @@ class UserPlaylistsController extends Controller
             ]);
 
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id, [
-                'form_params' => [
+                'json' => [
                     'playlists' => array_merge($last_activity->result, $array_playlists)
                 ]
             ]);
@@ -186,7 +186,7 @@ class UserPlaylistsController extends Controller
             $last_activity->result[$key]->updated_at            = date(DATE_ATOM);
     
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id_user, [
-                'form_params' => [
+                'json' => [
                     'playlists' => $last_activity->result
                 ]
             ]);
@@ -237,7 +237,7 @@ class UserPlaylistsController extends Controller
         } else {
             unset($raw_user['playlists'][$key]);
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id_user, [
-                'form_params' => [
+                'json' => [
                     'playlists' => ( count($raw_user['playlists']) === 0 ? 0 : array_values($raw_user['playlists']) )
                 ]
             ]);
