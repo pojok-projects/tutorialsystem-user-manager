@@ -57,7 +57,7 @@ class UserFollowerController extends Controller
             ]);
 
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id, [
-                'form_params' => [
+                'json' => [
                     'follower' => array_merge($last_activity->result, $array_follower)
                 ]
             ]);
@@ -156,7 +156,7 @@ class UserFollowerController extends Controller
         } else {
             unset($raw_user['follower'][$key]);
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id_user, [
-                'form_params' => [
+                'json' => [
                     'follower' => ( count($raw_user['follower']) === 0 ? 0 : array_values($raw_user['follower']) )
                 ]
             ]);

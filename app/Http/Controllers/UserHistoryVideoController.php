@@ -59,7 +59,7 @@ class UserHistoryVideoController extends Controller
             ]);
 
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id, [
-                'form_params' => [
+                'json' => [
                     'history_video' => array_merge($last_activity->result, $array_history_video)
                 ]
             ]);
@@ -229,7 +229,7 @@ class UserHistoryVideoController extends Controller
         } else {
             unset($raw_user['history_video'][$key]);
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id_user, [
-                'form_params' => [
+                'json' => [
                     'history_video' => ( count($raw_user['history_video']) === 0 ? 0 : array_values($raw_user['history_video']) )
                 ]
             ]);

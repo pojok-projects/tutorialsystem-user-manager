@@ -82,7 +82,7 @@ class UserController extends Controller
             ], 409);
         }else{
             $result = $this->client->request('POST', $this->endpoint.'user/store', [
-                'form_params' => [
+                'json' => [
                     'name'           => $request->name,
                     'email'          => $request->email,
                     'first_name'     => $request->first_name,
@@ -133,7 +133,7 @@ class UserController extends Controller
         $query = str_replace('%2B','+',urlencode('"'.http_build_query($_GET,'',',').'"'));
 
         $result = $this->client->request('POST', $this->endpoint.'user/search', [
-            'form_params' => [
+            'json' => [
                 'query' => $query
             ]
         ]);
@@ -199,7 +199,7 @@ class UserController extends Controller
             ], 409);
         }else{
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id, [
-                'form_params' => [
+                'json' => [
                     'name'           => $request->name,
                     'email'          => $request->email,
                     'first_name'     => $request->first_name,

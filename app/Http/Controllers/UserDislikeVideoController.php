@@ -59,7 +59,7 @@ class UserDislikeVideoController extends Controller
             ]);
 
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id, [
-                'form_params' => [
+                'json' => [
                     'dislike_video' => array_merge($last_activity->result, $array_dislike_video)
                 ]
             ]);
@@ -158,7 +158,7 @@ class UserDislikeVideoController extends Controller
         } else {
             unset($raw_user['dislike_video'][$key]);
             $result = $this->client->request('POST', $this->endpoint.'user/update/'.$id_user, [
-                'form_params' => [
+                'json' => [
                     'dislike_video' => ( count($raw_user['dislike_video']) === 0 ? 0 : array_values($raw_user['dislike_video']) )
                 ]
             ]);
